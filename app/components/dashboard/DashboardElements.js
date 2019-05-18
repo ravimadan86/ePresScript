@@ -274,6 +274,7 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop:'5px'
   },
   inputRoot: {
     color: 'inherit',
@@ -597,12 +598,12 @@ class DashboardElements extends Component {
               <div className={classes.searchIcon}>
                 <SearchIcon />
               </div>
-              <div>
+              <div style={{width:'85%',marginLeft:'8%'}}>
               <Autosuggest
                 {...autosuggestProps}
                 inputProps={{
                   classes,
-                  placeholder: 'Search a country (start with a)',
+                  placeholder: 'Search...',
                   value: this.state.single,
                   onChange: this.handleChange('single'),
                 }}

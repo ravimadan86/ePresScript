@@ -253,6 +253,7 @@
     "imagemagick": "^0.1.3",
     "immutability-helper": "^3.0.0",
     "install": "^0.12.2",
+    "lodash.deburr": "^4.1.0",
     "material-ui": "^0.20.2",
     "material-ui-pickers": "^2.0.4",
     "node-gyp": "^4.0.0",
