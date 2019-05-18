@@ -8,7 +8,7 @@ const API_CONFIG = {
 
   LOGIN:`${baseURL}/auth`,
   PROFILE: `${baseURL}/api/v1/user/profile`,
-  MEDICINE: `${baseURL}/api/v1/medicine`,
+  MEDICINE: `${baseURL}/api/v1/user/medicines`,
   TREATMENT: `${baseURL}/api/v1/treatment`,
 };
 
