@@ -6,8 +6,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import Cancel from '@material-ui/icons/CancelOutlined';
-import Check from "@material-ui/icons/Check";
+import Cancel from '@material-ui/icons/Delete';
+import Check from "@material-ui/icons/Add";
 import Info from "@material-ui/icons/info";
 import CCData from '../fakedata/cc_fake.json';
 import TestsData from '../fakedata/Tests_fake.json';
@@ -28,10 +28,19 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
+import Done  from '@material-ui/icons/DoneAll';
 import {setPatientPatientId} from "../features/prescription";
-
+import InputAdornment from '@material-ui/core/InputAdornment';
+import patientTest from '../assets/tests.png';
+// import { Scrollbars } from 'react-custom-scrollbars';
 let update = require('immutability-helper');
+import ScrollBars from "react-scrollbar";
 
+const scrollBarStyle = {
+  border: "1px solid red",
+  width: "400px",
+  height: "208px"
+};
 const styles = theme => ({
   root:{
     padding: '1%',
@@ -39,6 +48,9 @@ const styles = theme => ({
     paddingTop: '70px',
     height:'100%',
   },
+    rootContainer:{
+      height:'100%'
+    },
   container: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -66,9 +78,16 @@ const styles = theme => ({
     width: '45%',
   },
   cctextField:{
-    width:'70%',
+    width:'180px',
     margin:'0px',
-    padding:'0px'
+    overflow: 'auto',
+    marginTop:'10px'
+  },
+  cctextFieldInput:{
+    overflowY:'hidden',
+    '&:hover': {
+      overflowY:'auto'
+    }
   },
   medtextField:{
     width:'80%',
@@ -92,9 +111,17 @@ const styles = theme => ({
     padding: '2%',
     paddingTop:'0px',
     borderRight:'1px solid #D1D2D7',
+    display:'table'
+  },
+ centerGrid:{
+    padding: '2%',
+    paddingTop:'0px',
+    borderRight:'1px solid #D1D2D7',
+    height:'100%'
   },
   rightGrid:{
-    padding: '2%',
+    padding: '1%',
+    height:'100%'
   },
   iconBtn:{
     color:'#D9DADF',
@@ -118,6 +145,45 @@ const styles = theme => ({
       background: '#f9f9f9',
     },
 
+  },
+  leftPaneElm:{
+    margin:'0px',
+    marginTop:'15px',
+    padding:'0px',
+    height:'auto' ,
+
+  },
+  listElem:{
+    height:'20%' ,
+    maxHeight:'200px',
+    position:'relative',
+    overflowY:'hidden',
+    overflowX:'hidden',
+    '&:hover': {
+      overflowY:'auto'
+    },
+  },
+  medicineListElem:{
+    height:'auto' ,
+    maxHeight:'400px',
+    position:'relative',
+    overflowY:'auto',
+    overflowX:'hidden'
+  },
+  listElmContent:{
+    margin:'0px',
+    padding:'0px',
+    marginTop:'-10px'
+  },
+  centerPaneContent:{
+    height:'100%'
+  },
+  centerPaneContentHeader:{
+    height:'70%'
+
+  },
+  centerPaneContentFooter:{
+    height:'30%'
   }
 });
 
@@ -191,7 +257,7 @@ class PrescriptionWrittng extends React.Component{
     const {cc } = this.props.prescriptionState;
     console.log(cc);
     let medicineData = this.props.medicineState.medicineList;
-    console.log(medicineData)
+    console.log(medicineData);
     this.setState({
       list : cc,
       MedData:medicineData
@@ -211,7 +277,11 @@ class PrescriptionWrittng extends React.Component{
     }
     this.setState({ [id]: value });
   };
-
+  handleAdviceChange = (event)=>{
+    let value = event.target.value;
+    this.setState({AdviceValue:value});
+    this.props.setAdvice(value);
+  };
 
   handleSnackbar=(msg)=>{
     this.setState({
@@ -254,16 +324,19 @@ class PrescriptionWrittng extends React.Component{
   };
 
 
-  onRemoveItem = i => {
+  onRemoveCC = i => {
     //console.log(i);
     //console.log((this.state.list.length - i)-1);
     let x = (this.state.list.length - i)-1;//Since the list is printed in Descending order
+    const listtest = this.state.list.filter((item, j) => x !== j);
+    console.log(listtest);
     this.setState(state => {
       const list = state.list.filter((item, j) => x !== j);
       return {
         list,
       };
     });
+    this.props.deleteCC(i);
   };
   onRemoveOE = i => {
     let x = (this.state.OElist.length - i)-1;
@@ -273,6 +346,7 @@ class PrescriptionWrittng extends React.Component{
         OElist,
       };
     });
+    this.props.deleteOE(i);
   };
   onRemoveTests = i => {
     let x = (this.state.Testslist.length - i)-1;
@@ -283,6 +357,7 @@ class PrescriptionWrittng extends React.Component{
         Testslist,
       };
     });
+    this.props.deleteTest(i);
   };
   onRemoveDiagnosis = i => {
     let x = (this.state.Diagnosislist.length - i)-1;
@@ -293,8 +368,9 @@ class PrescriptionWrittng extends React.Component{
         Diagnosislist,
       };
     });
+    this.props.deleteDiagnosis(i);
   };
-  removeAll = i =>{
+  removeAllMedicine = i =>{
     let x =  i;
     console.log(x);
     this.setState(state => {
@@ -311,6 +387,7 @@ class PrescriptionWrittng extends React.Component{
         RemList,
       };
     });
+    this.props.deleteMedicine(i);
   };
 
   addCustomClinicalComplain = () => {
@@ -322,7 +399,7 @@ class PrescriptionWrittng extends React.Component{
         fl = 0;
       }
     });
-    if(fl==1){
+    if(fl===1){
       this.setState((prevState) => ({
         list: [...prevState.list, {name:customItemValue, id: latestId }],
         ccFakeData : [...prevState.ccFakeData, {name:customItemValue, id: latestId }],
@@ -335,71 +412,8 @@ class PrescriptionWrittng extends React.Component{
       this.handleSnackbar(msg);
     }
   };
-  addCustomOE=()=>{
-    let customItemValue = this.state.OEvalue;
-    let fl = 1;
-    let loopOE = this.state.OElist.map((j)=>{
-      if(j.name.toUpperCase() == customItemValue.toUpperCase()){
-        fl = 0;
-      }
-    })
-    if(fl==1){
-      let latestId = `${this.state.OElist.length + 1}`;
-      this.setState((prevState) => ({
-        OElist: [...prevState.OElist, {name:customItemValue, id: latestId }],
-        //ccFakeData : [...prevState.ccFakeData, {name:customItemValue, id: latestId }],
-        OEvalue:''
-      }));
-    }
-    else{
-      let msg = "This O/E Already Exists!";
-      this.handleSnackbar(msg);
-    }
-  }
-  addCustomTests=()=>{
-    let customItemValue = this.state.Testsvalue;
-    let fl = 1;
-    let loopTests = this.state.Testslist.map((j)=>{
-      if(j.name.toUpperCase() == customItemValue.toUpperCase()){
-        fl = 0;
-      }
-    })
-    if(fl==1){
-      let latestId = `${this.state.Testslist.length + 1}`;
-      this.setState((prevState) => ({
-        Testslist: [...prevState.Testslist, {name:customItemValue, id: latestId }],
-        TestsFakeData : [...prevState.TestsFakeData, {name:customItemValue, id: latestId }],
-        Testsvalue:''
-      }));
-    }else{
-      let msg = "This Test Already Exists!";
-      this.handleSnackbar(msg);
-    }
-  }
-  addCustomDiagnosis=()=>{
-    let customItemValue = this.state.Diagnosisvalue;
-    let fl = 1;
-    let loopDiag = this.state.Diagnosislist.map((j)=>{
-      if(j.name.toUpperCase() == customItemValue.toUpperCase()){
-        fl = 0;
-      }
-    })
-    if(fl==1){
-      let latestId = `${this.state.Diagnosislist.length + 1}`;
-      this.setState((prevState) => ({
-        Diagnosislist: [...prevState.Diagnosislist, {name:customItemValue, id: latestId }],
-        DiagnosisFakeData : [...prevState.DiagnosisFakeData, {name:customItemValue, id: latestId }],
-        Diagnosisvalue:''
-      }));
-      this.handleAddSuggestion(customItemValue);
-    }else{
-      let msg = "This Diagnosis Already Exists!";
-      this.handleSnackbar(msg);
-    }
-  }
+
   addCC=(item)=>{
-    console.log(this.props.treatmentState);
-    console.log(this.state);
     let itemName = item.name;
     let fl = 1;
     let loopCC = this.state.list.map((j)=>{
@@ -407,13 +421,62 @@ class PrescriptionWrittng extends React.Component{
         fl = 0;
       }
     });
-    if(fl==1){
+    if(fl===1){
       this.setState((prevState) => ({
         list: [...prevState.list, {name:item.name, id:item.id}],
         value:''
       }));
+
+      const newClinicalCompain = { name : item.name, id : item.id};
+      this.props.setCC(newClinicalCompain);
     }else{
       let msg = "This C/C Already Exists!";
+      this.handleSnackbar(msg);
+    }
+  };
+  addCustomOE=()=>{
+    let customItemValue = this.state.OEvalue;
+    let fl = 1;
+    let loopOE = this.state.OElist.map((j)=>{
+      if(j.name.toUpperCase() === customItemValue.toUpperCase()){
+        fl = 0;
+      }
+    });
+    if(fl===1){
+      let latestId = `${this.state.OElist.length + 1}`;
+      const newOE = { name : customItemValue, id : latestId};
+      this.setState((prevState) => ({
+        OElist: [...prevState.OElist, {name:customItemValue, id: latestId }],
+        //ccFakeData : [...prevState.ccFakeData, {name:customItemValue, id: latestId }],
+        OEvalue:''
+      }));
+      this.props.setOE(newOE);
+    }
+    else{
+      let msg = "This O/E Already Exists!";
+      this.handleSnackbar(msg);
+    }
+  };
+  addCustomTests=()=>{
+    let customItemValue = this.state.Testsvalue;
+    let fl = 1;
+    let loopTests = this.state.Testslist.map((j)=>{
+      if(j.name.toUpperCase() === customItemValue.toUpperCase()){
+        fl = 0;
+      }
+    });
+    if(fl===1){
+      let latestId = `${this.state.Testslist.length + 1}`;
+      const newTest = { name : customItemValue, id : latestId};
+
+      this.setState((prevState) => ({
+        Testslist: [...prevState.Testslist, {name:customItemValue, id: latestId }],
+        TestsFakeData : [...prevState.TestsFakeData, {name:customItemValue, id: latestId }],
+        Testsvalue:''
+      }));
+      this.props.setTests(newTest);
+    }else{
+      let msg = "This Test Already Exists!";
       this.handleSnackbar(msg);
     }
   };
@@ -421,18 +484,44 @@ class PrescriptionWrittng extends React.Component{
     let itemName = item.name;
     let fl = 1;
     let loopTests = this.state.Testslist.map((j)=>{
-      if(j.name.toUpperCase() == itemName.toUpperCase()){
+      if(j.name.toUpperCase() === itemName.toUpperCase()){
         fl = 0;
       }
-    })
-    if(fl==1){
+    });
+    if(fl===1){
       this.setState((prevState) => ({
         Testslist: [...prevState.Testslist, {name:item.name, id:item.id}],
         Testsvalue:''
       }));
+
+      const newTest = { name : item.name, id : item.id};
+      this.props.setTests(newTest);
     }
     else{
       let msg = "This Test Already Exists!";
+      this.handleSnackbar(msg);
+    }
+  };
+  addCustomDiagnosis=()=>{
+    let customItemValue = this.state.Diagnosisvalue;
+    let fl = 1;
+    let loopDiag = this.state.Diagnosislist.map((j)=>{
+      if(j.name.toUpperCase() === customItemValue.toUpperCase()){
+        fl = 0;
+      }
+    });
+    if(fl===1){
+      let latestId = `${this.state.Diagnosislist.length + 1}`;
+      const newDiagnosis={name: customItemValue , id: latestId};
+      this.setState((prevState) => ({
+        Diagnosislist: [...prevState.Diagnosislist, {name:customItemValue, id: latestId }],
+        DiagnosisFakeData : [...prevState.DiagnosisFakeData, {name:customItemValue, id: latestId }],
+        Diagnosisvalue:''
+      }));
+      this.props.setDiagnosis(newDiagnosis);
+      this.handleAddSuggestion(customItemValue);
+    }else{
+      let msg = "This Diagnosis Already Exists!";
       this.handleSnackbar(msg);
     }
   };
@@ -440,15 +529,17 @@ class PrescriptionWrittng extends React.Component{
     let itemName = item.name;
     let fl = 1;
     let loopDiagnosis = this.state.Diagnosislist.map((j)=>{
-      if(j.name.toUpperCase() == itemName.toUpperCase()){
+      if(j.name.toUpperCase() === itemName.toUpperCase()){
         fl = 0;
       }
-    })
-    if(fl==1){
+    });
+    if(fl===1){
       this.setState((prevState) => ({
         Diagnosislist: [...prevState.Diagnosislist, {name:item.name, id:item.id}],
         Diagnosisvalue:''
       }));
+      const newDiagnosis = { name : item.name, id : item.id};
+      this.props.setDiagnosis(newDiagnosis);
       this.handleAddSuggestion(1);
     }
     else{
@@ -466,7 +557,7 @@ class PrescriptionWrittng extends React.Component{
     });
     //console.log(this.state.TempMedValue);
   };
-  addAll=()=>{
+  addAllMedicine=()=>{
     let MedVal = this.state.TempMedValue;
     let StrenVal = this.state.TempStrenValue;
     if(StrenVal == '')StrenVal = "N/A";
@@ -494,12 +585,20 @@ class PrescriptionWrittng extends React.Component{
     })
     if(fl == 1){
       let latestId = `${this.state.MedList.length + 1}`;
+
+      const medicine= {name: MedVal , id:latestId};
+      const type= {name: TypVal , id:latestId};
+      const frequency= {name: FreqVal , id:latestId};
+      const remark= {name: RemVal , id:latestId};
+      const strength= {name: StrenVal , id:latestId};
+
+
       this.setState((prevState) => ({
-        MedList: [...prevState.MedList, {name:MedVal, id: latestId }],
-        StrenList: [...prevState.StrenList, {name:StrenVal, id: latestId }],
-        TypeList: [...prevState.TypeList, {name:TypVal, id: latestId }],
-        FreqList: [...prevState.FreqList, {name:FreqVal, id: latestId }],
-        RemList: [...prevState.RemList, {name:RemVal, id: latestId }],
+        MedList: [...prevState.MedList, {name: MedVal , id:latestId }],
+        StrenList: [...prevState.StrenList, {name: StrenVal , id:latestId}],
+        TypeList: [...prevState.TypeList, {name: TypVal , id:latestId }],
+        FreqList: [...prevState.FreqList, {name: FreqVal , id:latestId }],
+        RemList: [...prevState.RemList, {name: RemVal , id:latestId}],
         //TestsFakeData : [...prevState.TestsFakeData, {name:customItemValue, id: latestId }],
         TempMedValue:'',
         TempFreqValue:'',
@@ -508,6 +607,14 @@ class PrescriptionWrittng extends React.Component{
         TempTypValue:'',
 
       }));
+      const medObj = {
+        medicine : medicine,
+        type: type,
+        frequency: frequency,
+        strength: strength,
+        remark: remark
+      };
+      this.props.setMedicine(medObj);
     }
     else{
       let msg = "Already Exists!";
@@ -515,7 +622,7 @@ class PrescriptionWrittng extends React.Component{
     }
     //console.log(this.state);
   };
-  onUpdateItem = (val) => {
+  onUpdateCC = (val) => {
     let target = val.target;
     let value = target.value;
     let id = target.id;
@@ -531,6 +638,8 @@ class PrescriptionWrittng extends React.Component{
       $splice: [[commentIndex, 1, updatedComment]]
     });
     this.setState({list: newData});
+    console.log("Update CC " , newData);
+    this.props.updateCC(newData);
   };
   onUpdateOE = (val) => {
     let target = val.target;
@@ -548,6 +657,7 @@ class PrescriptionWrittng extends React.Component{
       $splice: [[commentIndex, 1, updatedComment]]
     });
     this.setState({OElist: newData});
+    this.props.updateOE(newData);
   };
   onUpdateTests = (val) => {
     let target = val.target;
@@ -565,6 +675,7 @@ class PrescriptionWrittng extends React.Component{
       $splice: [[commentIndex, 1, updatedComment]]
     });
     this.setState({Testslist: newData});
+    this.props.updateTest(newData);
   };
   onUpdateDiagnosis = (val) => {
     let target = val.target;
@@ -582,6 +693,7 @@ class PrescriptionWrittng extends React.Component{
       $splice: [[commentIndex, 1, updatedComment]]
     });
     this.setState({Diagnosislist: newData});
+    this.props.updateDiagnosis(newData);
   };
   onUpdateMed = (val) => {
     let target = val.target;
@@ -599,6 +711,7 @@ class PrescriptionWrittng extends React.Component{
       $splice: [[commentIndex, 1, updatedComment]]
     });
     this.setState({MedList: newData});
+    this.props.updateMedicineName(newData);
   };
   onUpdateStren = (val) => {
     let target = val.target;
@@ -616,6 +729,7 @@ class PrescriptionWrittng extends React.Component{
       $splice: [[commentIndex, 1, updatedComment]]
     });
     this.setState({StrenList: newData});
+    this.props.updateMedicineStrength(newData);
   };
   onUpdateType = (val) => {
     let target = val.target;
@@ -633,6 +747,7 @@ class PrescriptionWrittng extends React.Component{
       $splice: [[commentIndex, 1, updatedComment]]
     });
     this.setState({TypeList: newData});
+    this.props.updateMedicineType(newData);
   };
   onUpdateFreq = (val) => {
     let target = val.target;
@@ -650,6 +765,7 @@ class PrescriptionWrittng extends React.Component{
       $splice: [[commentIndex, 1, updatedComment]]
     });
     this.setState({FreqList: newData});
+    this.props.updateMedicineFequency(newData);
   };
   onUpdateRem = (val) => {
     let target = val.target;
@@ -667,6 +783,7 @@ class PrescriptionWrittng extends React.Component{
       $splice: [[commentIndex, 1, updatedComment]]
     });
     this.setState({RemList: newData});
+    this.props.updateMedicineRemark(newData);
   };
   CCsearchKeywords = (event)=>{
     let keyword = event.target.value;
@@ -717,10 +834,7 @@ class PrescriptionWrittng extends React.Component{
       DiagnosisOnChange:true
     })
   };
-  AdviceSearchKeywords = (event)=>{
-    let keyword = event.target.value;
-    this.setState({AdviceValue:keyword});
-  };
+
   OEsearchKeywords = (event)=>{
     let keyword = event.target.value;
     this.setState({OEvalue:keyword});
@@ -758,8 +872,8 @@ class PrescriptionWrittng extends React.Component{
   };
   handleAddSuggestion = (value)=>{
     this.state.SuggestionOn = true;
-    console.log("Suggestion added "+ value)
-  }
+    console.log("Suggestion added ", value)
+  };
   handleAddSuggestion2 = (val) =>{
     console.log(val);
     console.log(this.state.SuggestionsData);
@@ -779,22 +893,21 @@ class PrescriptionWrittng extends React.Component{
             let RemVal = i.indication;
             if(RemVal == '')RemVal = "N/A";
 
-
             let FreqVal = i.frequency;
             if(FreqVal == '')FreqVal = "N/A";
             let fl = 1;
             let loopMed = this.state.MedList.map((j)=>{
-              if(j.name.toUpperCase() == MedVal.toUpperCase()){
+              if(j.name.toUpperCase() === MedVal.toUpperCase()){
                 fl = 0;
               }
-            })
+            });
 
             let loopStren = this.state.StrenList.map((k)=>{
-              if(k.name.toUpperCase() == MedVal.toUpperCase()){
+              if(k.name.toUpperCase() === MedVal.toUpperCase()){
                 fl = 0;
               }
-            })
-            if(fl == 1){
+            });
+            if(fl === 1){
               let latestId = `${this.state.MedList.length + 1}`;
               this.setState((prevState) => ({
                 MedList: [...prevState.MedList, {name:MedVal, id: latestId }],
@@ -819,26 +932,15 @@ class PrescriptionWrittng extends React.Component{
         });
       }
     })
-  }
+  };
   render(){
-    console.log(this.props);
-    const {
-      patientName,
-      patientAge,
-      patientSex,
-      patientMobile,
-      patientEmail,
-      patientPatientId , cc} = this.props.prescriptionState;
+    console.log("Props " , this.props);
+    console.log("State " , this.state);
 
-    const listCopy = this.state.list;
-    const OElistCopy = this.state.OElist;
-    const TestlistCopy = this.state.Testslist;
-    const DiagnosislistCopy = this.state.Diagnosislist;
-    const MedListCopy = this.state.MedList;
-    const StrenListCopy = this.state.StrenList;
-    const TypeListCopy = this.state.TypeList;
-    const FreqListCopy = this.state.FreqList;
-    const RemListCopy = this.state.RemList;
+    const {
+      patientName, patientAge, patientSex, patientMobile, patientEmail, advice, followupdate,
+      patientPatientId , cc , oe, diagnosis, tests, medicine , type, strength, remark, frequency} = this.props.prescriptionState;
+
 
     const { classes } = this.props;
     const CC = this.state.ccOnChange?this.state.ccFiltered.map((item)=>{
@@ -940,7 +1042,7 @@ class PrescriptionWrittng extends React.Component{
     }):null;
     return (
       <div className={classes.root}>
-        <Card>
+        <Card className={classes.rootContainer}>
           <Grid container style={{width:'100%',padding:'0% 1%',borderBottom:'1px solid #D1D2D7'}}>
             <form className={classes.container} noValidate autoComplete="off">
               <Grid item xs={3}>
@@ -1003,78 +1105,86 @@ class PrescriptionWrittng extends React.Component{
               </Grid>
             </form>
           </Grid>
-          <Grid container >
+          <Grid container style={{ height:'100%'}} >
             <Grid item xs={2} className={classes.leftGrid} style={{ height:'100%',paddingRight:'0px'}}>
-              <Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>C/C</Typography>
-              <div style={{margin:'0px',marginTop:'-5px',padding:'0px', height:'20%',position:'relative',overflowY:'auto'}}>
+              {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>C/C</Typography>*/}
+              <div className={classes.leftPaneElm}>
                 <TextField
                   id="standard-name"
-                  label="Add New"
                   className={classes.cctextField}
                   value={this.state.value}
                   onChange={this.CCsearchKeywords}
                   margin="normal"
                   style={{fontSize:'14px'}}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">CC</InputAdornment>,
+                    endAdornment:  <IconButton
+                      onClick={this.addCustomClinicalComplain}
+                      disabled={!this.state.value}
+                    >
+                      <Check style={{color:'#000', fontSize:'20px'}}/>
+                    </IconButton>
+                  }}
                 />
-                <IconButton
-                  onClick={this.addCustomClinicalComplain}
-                  disabled={!this.state.value}
-                  style={{marginTop:'-40px',marginLeft:'70%'}}
-                >
-                  <Check style={{color:'#7f7f7f'}}/>
-                </IconButton>
+
                 {!this.state.value==""?
-                  <div style={{maxHeight:'200px', width:'90%', position:'relative', overflow:'auto',padding:'0px',marginTop:'-15px'}}>
+                  <div style={{maxHeight:'150px', width:'90%', position:'relative', overflow:'auto',padding:'0px'}}>
                     <ul style={{marginLeft:'-35px',marginTop:'-1px'}}>
                       {!this.state.value==""?CC:null}
                     </ul>
                   </div>:null
                 }
-                {cc != null ?
-                  cc.slice(0).reverse().map((itemx,index) => (
-                    <div key={index} style={{margin:'0px', padding:'0px'}}>
+                <div className={classes.listElem}>
+                  {cc != null ?
+                  cc.slice(0).map((itemx,index) => (
+                    <div key={index} className={classes.listElmContent}>
                       <TextField
                         id={itemx.id}
                         multiline
                         className={classes.cctextField}
                         name={`${index}`}
                         value={itemx.name}
-                        onChange={this.onUpdateItem.bind(this)}
+                        onChange={this.onUpdateCC.bind(this)}
                         margin="normal"
-                        style={{fontSize:'14px',marginTop:'-15px'}}
+                        style={{fontSize:'14px'}}
+                        InputProps={{
+                          className: classes.cctextFieldInput,
+                          startAdornment: <InputAdornment position="start">
+                            <Done />
+                          </InputAdornment>,
+                          endAdornment: <IconButton
+                            onClick={() => this.onRemoveCC(index)}
+                          >
+                            <Cancel  style={{color:'#7f7f7f', fontSize:'18px'}}/>
+                          </IconButton>
+                        }}
                       />
-                      <IconButton
-                        onClick={() => this.onRemoveItem(index)}
-                        style={{marginTop:'-45px',marginLeft:'70%'}}
-                      >
-                        <Cancel  style={{color:'#7f7f7f', fontSize:'20px'}}/>
-                      </IconButton>
+
                     </div>
-                  )) : null}
+                  )) : null} </div>
               </div>
-              <Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>O/E</Typography>
-              <div style={{margin:'0px',marginTop:'-5px',padding:'0px', height:'20%',position:'relative',overflowY:'auto'}}>
+              {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>O/E</Typography>*/}
+              <div className={classes.leftPaneElm}>
                 <TextField
                   id=""
-                  label="Add New"
                   multiline
                   className={classes.cctextField}
                   value={this.state.OEvalue}
                   onChange={this.OEsearchKeywords}
                   margin="normal"
                   style={{fontSize:'14px'}}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">O/E</InputAdornment>,
+                    endAdornment:  <IconButton onClick={this.addCustomOE}
+                      disabled={!this.state.OEvalue}>
+                      <Check style={{color:'#000', fontSize:'20px'}}/>
+                    </IconButton>
+                  }}
                 />
-                <IconButton
-                  onClick={this.addCustomOE}
-                  disabled={!this.state.OEvalue}
-                  style={{marginTop:'-40px',marginLeft:'70%'}}
-                >
-                  <Check style={{color:'#7f7f7f'}}/>
-                </IconButton>
-
-                {OElistCopy != null ?
-                  OElistCopy.slice(0).reverse().map((itemx,index) => (
-                    <div key={index} style={{margin:'0px', padding:'0px'}}>
+                <div className={classes.listElem}>
+                  {oe != null ?
+                  oe.slice(0).reverse().map((itemx,index) => (
+                    <div key={index} className={classes.listElmContent}>
                       <TextField
                         id={itemx.id}
                         multiline
@@ -1083,45 +1193,53 @@ class PrescriptionWrittng extends React.Component{
                         value={itemx.name}
                         onChange={this.onUpdateOE.bind(this)}
                         margin="normal"
-                        style={{fontSize:'14px',marginTop:'-17px'}}
+                        style={{fontSize:'14px'}}
+                        InputProps={{
+                          className: classes.cctextFieldInput,
+                          startAdornment: <InputAdornment position="start">
+                            <Done />
+                          </InputAdornment>,
+                          endAdornment: <IconButton
+                            onClick={() => this.onRemoveOE(index)}>
+                            <Cancel  style={{color:'#7f7f7f', fontSize:'18px'}}/>
+                          </IconButton>
+                        }}
                       />
-                      <IconButton
-                        onClick={() => this.onRemoveOE(index)}
-                        style={{marginTop:'-45px',marginLeft:'70%'}}
-                      >
-                        <Cancel  style={{color:'#7f7f7f', fontSize:'18px',marginTop:'-5px'}}/>
-                      </IconButton>
+
                     </div>
-                  )) : null}
+                  )) : null} </div>
               </div>
-              <Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Diagnosis</Typography>
-              <div style={{margin:'0px',marginTop:'-5px',padding:'0px', height:'20%',position:'relative',overflowY:'auto'}}>
+              {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Diagnosis</Typography>*/}
+              <div className={classes.leftPaneElm}>
                 <TextField
                   id="Diagnosis"
-                  label="Add Diagnosis"
                   className={classes.cctextField}
                   value={this.state.Diagnosisvalue}
                   onChange={this.DiagnosisSearchKeywords}
                   margin="normal"
                   style={{fontSize:'14px'}}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">Diagnosis</InputAdornment>,
+                    endAdornment:  <IconButton
+                      onClick={this.addCustomDiagnosis}
+                      disabled={!this.state.Diagnosisvalue}
+                    >
+                      <Check style={{color:'#000', fontSize:'20px'}}/>
+                    </IconButton>
+                  }}
                 />
-                <IconButton
-                  onClick={this.addCustomDiagnosis}
-                  disabled={!this.state.Diagnosisvalue}
-                  style={{marginTop:'-45px',marginLeft:'70%'}}
-                >
-                  <Check style={{color:'#7f7f7f'}}/>
-                </IconButton>
+
                 {!this.state.Diagnosisvalue==""?
-                  <div style={{maxHeight:'200px', width:'90%', position:'relative', overflow:'auto',padding:'0px',marginTop:'-15px'}}>
+                  <div style={{maxHeight:'150px', width:'90%', position:'relative', overflow:'auto',padding:'0px'}}>
                     <ul style={{marginLeft:'-35px',marginTop:'-1px'}}>
                       {!this.state.Diagnosisvalue==""?Diagnosis:null}
                     </ul>
                   </div>:null
                 }
-                {DiagnosislistCopy != null ?
-                  DiagnosislistCopy.slice(0).reverse().map((itemx,index) => (
-                    <div key={index} style={{margin:'0px', padding:'0px'}}>
+                <div className={classes.listElem}>
+                  {diagnosis != null ?
+                  diagnosis.slice(0).reverse().map((itemx,index) => (
+                    <div key={index} className={classes.listElmContent}>
                       <TextField
                         id={itemx.id}
                         multiline
@@ -1130,154 +1248,92 @@ class PrescriptionWrittng extends React.Component{
                         value={itemx.name}
                         onChange={this.onUpdateDiagnosis.bind(this)}
                         margin="normal"
-                        style={{fontSize:'14px',marginTop:'-15px'}}
+                        style={{fontSize:'14px'}}
+                        InputProps={{
+                          className: classes.cctextFieldInput,
+                          startAdornment: <InputAdornment position="start"> <Done /></InputAdornment>,
+                          endAdornment:  <IconButton onClick={() => this.onRemoveDiagnosis(index)}>
+                            <Cancel  style={{color:'#7f7f7f', fontSize:'18px'}}/>
+                          </IconButton>
+                        }}
                       />
-                      <IconButton
-                        onClick={() => this.onRemoveDiagnosis(index)}
-                        style={{marginTop:'-40px',marginLeft:'70%'}}
-                      >
-                        <Cancel  style={{color:'#7f7f7f', fontSize:'18px',marginTop:'-5px'}}/>
-                      </IconButton>
+
                     </div>
-                  )) : null}
+                  )) : null} </div>
               </div>
-              <Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Tests</Typography>
-              <div style={{margin:'0px',marginTop:'-5px',padding:'0px', height:'20%',position:'relative',overflowY:'auto'}}>
+              {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Tests</Typography>*/}
+              <div className={classes.leftPaneElm}>
+
                 <TextField
                   id="tests"
-                  label="Add Tests"
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">Tests</InputAdornment>,
+                    endAdornment:  <IconButton onClick={this.addCustomTests}
+                      disabled={!this.state.Testsvalue}>
+                      <Check style={{color:'#000', fontSize:'20px'}}/>
+                    </IconButton>
+                  }}
                   className={classes.cctextField}
                   value={this.state.Testsvalue}
                   onChange={this.TestsSearchKeywords}
                   margin="normal"
-                  style={{fontSize:'14px'}}
+                  style={{fontSize:'14px', overflow:'auto'}}
                 />
-                <IconButton
-                  onClick={this.addCustomTests}
-                  disabled={!this.state.Testsvalue}
-                  style={{marginTop:'-45px',marginLeft:'70%'}}
-                >
-                  <Check style={{color:'#7f7f7f'}}/>
-                </IconButton>
+
                 {!this.state.Testsvalue==""?
-                  <div style={{maxHeight:'200px', width:'90%', position:'relative', overflow:'auto',padding:'0px',marginTop:'-15px'}}>
+                  <div style={{maxHeight:'150px', width:'90%', position:'relative', overflow:'auto',padding:'0px'}}>
                     <ul style={{marginLeft:'-35px',marginTop:'-1px'}}>
                       {!this.state.Testsvalue==""?TESTS:null}
                     </ul>
                   </div>:null
                 }
-                {TestlistCopy != null ?
-                  TestlistCopy.slice(0).reverse().map((itemx,index) => (
-                    <div key={index} style={{margin:'0px', padding:'0px'}}>
+                <div className={classes.listElem}>
+                {tests != null ?
+                  tests.slice(0).reverse().map((itemx,index) => (
+
+                    <div key={index} className={classes.listElmContent}>
                       <TextField
                         id={itemx.id}
                         multiline
-
+                        InputProps={{
+                          className: classes.cctextFieldInput,
+                          startAdornment: <InputAdornment position="start">
+                           <Done />
+                          </InputAdornment>,
+                          endAdornment: <IconButton
+                            onClick={() => this.onRemoveTests(index)}>
+                            <Cancel  style={{color:'#7f7f7f', fontSize:'18px'}}/>
+                          </IconButton>
+                        }}
                         className={classes.cctextField}
                         name={`${index}`}
                         value={itemx.name}
                         onChange={this.onUpdateTests.bind(this)}
                         margin="normal"
-                        style={{fontSize:'14px',marginTop:'-15px'}}
+                        style={{fontSize:'14px'}}
                       />
-                      <IconButton
-                        onClick={() => this.onRemoveTests(index)}
-                        style={{marginTop:'-40px',marginLeft:'70%'}}
-                      >
-                        <Cancel  style={{color:'#7f7f7f', fontSize:'18px',marginTop:'-5px'}}/>
-                      </IconButton>
                     </div>
-                  )) : null}
+                  )) : null}</div>
+
+
               </div>
-              <Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Advice</Typography>
-              <div style={{margin:'0px',marginTop:'-5px',padding:'0px', height:'20%',position:'relative',overflowY:'auto'}}>
+              {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Advice</Typography>*/}
+              <div className={classes.leftPaneElm}>
                 <TextField
                   id="advice"
                   label="Add Advice"
                   multiline
                   rowsMax="3"
-                  value={this.state.AdviceValue}
-                  onChange={this.AdviceSearchKeywords}
+                  value={advice}
+                  onChange={this.handleAdviceChange}
                   className={classes.adviceTextField}
                   margin="normal"
                   style={{fontSize:'14px',marginTop:'-3px'}}
                 />
               </div>
             </Grid>
-            <Grid item xs={7} className={classes.leftGrid} >
-              {MedListCopy != null ?
-                MedListCopy.map((itemx,index) => (
-                  <Grid container key={index} style={{marginTop:'10px'}}>
-                    <Grid item xs={3}>
-                      <TextField
-                        id={itemx.id}
-                        name={`${index}`}
-                        //label="Medicine Name"
-                        className={classes.medtextField}
-                        value={itemx.name}
-                        onChange={this.onUpdateMed.bind(this)}
-                        margin="normal"
-                        style={{fontSize:'14px'}}
-                      />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <TextField
-                        id={itemx.id}
-                        name={`${index}`}
-                        //label="Strength"
-                        className={classes.medtextField}
-                        value={StrenListCopy[index].name}
-                        onChange={this.onUpdateStren.bind(this)}
-                        margin="normal"
-                        style={{fontSize:'14px'}}
-                      />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <TextField
-                        id={itemx.id}
-                        name={`${index}`}
-                        //label="Type"
-                        className={classes.medtextField}
-                        value={TypeListCopy[index].name}
-                        onChange={this.onUpdateType.bind(this)}
-                        margin="normal"
-                        style={{fontSize:'14px'}}
-                      />
-                    </Grid>
-                    <Grid item xs={2}>
-                      <TextField
-                        id={itemx.id}
-                        name={`${index}`}
-                        //label="Frequency"
-                        className={classes.medtextField}
-                        value={FreqListCopy[index].name}
-                        onChange={this.onUpdateFreq.bind(this)}
-                        margin="normal"
-                        style={{fontSize:'14px'}}
-                      />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <TextField
-                        id={itemx.id}
-                        name={`${index}`}
-                        //label="Remark"
-                        className={classes.medtextField}
-                        value={RemListCopy[index].name}
-                        onChange={this.onUpdateRem.bind(this)}
-                        margin="normal"
-                        style={{fontSize:'14px'}}
-                      />
-                      <IconButton
-                        onClick={() => this.removeAll(index)}
-                        //disabled={!this.state.TempMedValue}
-                        style={{marginTop:'-40px',marginLeft:'80%'}}
-                      >
-                        <Cancel style={{color:'#7f7f7f'}}/>
-                      </IconButton>
-                    </Grid>
-                  </Grid>
-                ))
-                : null}
+            <Grid item xs={7} className={classes.centerGrid} >
+
               <Grid container>
                 <Grid item xs={3}>
                   <TextField
@@ -1341,7 +1397,7 @@ class PrescriptionWrittng extends React.Component{
                     style={{fontSize:'14px'}}
                   />
                   <IconButton
-                    onClick={this.addAll}
+                    onClick={this.addAllMedicine}
                     disabled={!this.state.TempMedValue}
                     style={{marginTop:'-40px',marginLeft:'80%'}}
                   >
@@ -1349,11 +1405,91 @@ class PrescriptionWrittng extends React.Component{
                   </IconButton>
                 </Grid>
               </Grid>
+              <div className={classes.centerPaneContentHeader}>
+              <div className={classes.medicineListElem}>
+                {medicine != null ?
+                  medicine.map((itemx,index) => (
+                    <Grid container key={index} style={{marginTop:'10px'}}>
+                      <Grid item xs={3}>
+                        <TextField
+                          id={itemx.id}
+                          name={`${index}`}
+                          //label="Medicine Name"
+                          className={classes.medtextField}
+                          value={itemx.name}
+                          onChange={this.onUpdateMed.bind(this)}
+                          margin="normal"
+                          style={{fontSize:'14px'}}
+                        />
+                      </Grid>
+                      <Grid item xs={2}>
+                        <TextField
+                          id={itemx.id}
+                          name={`${index}`}
+                          //label="Strength"
+                          className={classes.medtextField}
+                          value={strength[index].name}
+                          onChange={this.onUpdateStren.bind(this)}
+                          margin="normal"
+                          style={{fontSize:'14px'}}
+                        />
+                      </Grid>
+                      <Grid item xs={2}>
+                        <TextField
+                          id={itemx.id}
+                          name={`${index}`}
+                          //label="Type"
+                          className={classes.medtextField}
+                          value={type[index].name}
+                          onChange={this.onUpdateType.bind(this)}
+                          margin="normal"
+                          style={{fontSize:'14px'}}
+                        />
+                      </Grid>
+                      <Grid item xs={2}>
+                        <TextField
+                          id={itemx.id}
+                          name={`${index}`}
+                          //label="Frequency"
+                          className={classes.medtextField}
+                          value={frequency[index].name}
+                          onChange={this.onUpdateFreq.bind(this)}
+                          margin="normal"
+                          style={{fontSize:'14px'}}
+                        />
+                      </Grid>
+                      <Grid item xs={3}>
+                        <TextField
+                          id={itemx.id}
+                          name={`${index}`}
+                          //label="Remark"
+                          className={classes.medtextField}
+                          value={remark[index].name}
+                          onChange={this.onUpdateRem.bind(this)}
+                          margin="normal"
+                          style={{fontSize:'14px'}}
+                        />
+                        <IconButton
+                          onClick={() => this.removeAllMedicine(index)}
+                          //disabled={!this.state.TempMedValue}
+                          style={{marginTop:'-40px',marginLeft:'80%'}}
+                        >
+                          <Cancel style={{color:'#7f7f7f'}}/>
+                        </IconButton>
+                      </Grid>
+                    </Grid>
+                  ))
+                  : null}
+                  </div>
+              </div>
+              <div className={classes.centerPaneContentFooter}>
 
+                <h1>Footer</h1>
+              </div>
             </Grid>
             <Grid item xs={3} className={classes.rightGrid}>
               <Info style={{fontSize:'18px',color:'orange'}}/>
-              <h5 style={{marginTop:'-21px',marginLeft:'31px'}}>Suggestions</h5>
+              <h5 style={{marginTop:'-15px',marginLeft:'31px'}}>Suggestions</h5>
               {SuggestionShow}
             </Grid>
           </Grid>
