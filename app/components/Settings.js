@@ -12,9 +12,12 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Button from '@material-ui/core/Button';
+import Check from '@material-ui/icons/CheckCircle';
+import Grid from '@material-ui/core/Grid';
 const ipcRenderer = require("electron").ipcRenderer;
 import {IconSettingsPrinter , IconSettingsDocument} from '../assets';
 import Switch from '@material-ui/core/Switch';
+
 
 const styles = theme => ({
   root: {
@@ -160,8 +163,10 @@ class Settings extends React.Component{
     const { value , printers } = this.state;
     console.log("Inside Settings Component");
     console.log(this.state);
+    console.log(this.props);
   // console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
     const { expanded } = this.state;
+    
 
     return(
       <div className={classes.root}>
@@ -188,7 +193,12 @@ class Settings extends React.Component{
 
             <ExpansionPanel expanded={expanded === p.name} onChange={this.handleChange(p.name)}>
               <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography className={classes.heading}>General settings</Typography>
+                <Grid container>
+                  {this.state.defaultPrinter == p.name?
+                  <Grid item xs={2}><Check style={{color:'green'}} /></Grid>
+                  :null}
+                  <Grid item xs={10}><Typography className={classes.heading}>General settings</Typography></Grid>
+                </Grid>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails>
                 <a href="#" onClick={this.setDefaultPrinter(p.name)}>Set this as default printer</a>
