@@ -1,11 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
+
 import Grid from '@material-ui/core/Grid';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
+
 import Cancel from '@material-ui/icons/Delete';
 import Check from "@material-ui/icons/Add";
 import Info from "@material-ui/icons/info";
@@ -13,7 +13,7 @@ import CCData from '../fakedata/cc_fake.json';
 import TestsData from '../fakedata/Tests_fake.json';
 import DiagnosisData from '../fakedata/diagnosis_fake.json';
 import TreatmentData from '../fakedata/Treatment_fake.json';
-//import MedData from '../fakedata/med_fake.json';
+
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -29,18 +29,11 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
 import Done  from '@material-ui/icons/DoneAll';
-import {setPatientPatientId} from "../features/prescription";
 import InputAdornment from '@material-ui/core/InputAdornment';
-import patientTest from '../assets/tests.png';
-// import { Scrollbars } from 'react-custom-scrollbars';
-let update = require('immutability-helper');
-import ScrollBars from "react-scrollbar";
 
-const scrollBarStyle = {
-  border: "1px solid red",
-  width: "400px",
-  height: "208px"
-};
+let update = require('immutability-helper');
+
+
 const styles = theme => ({
   root:{
     padding: '1%',
