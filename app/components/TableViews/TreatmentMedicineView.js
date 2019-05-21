@@ -23,6 +23,13 @@ import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Grid from '@material-ui/core/Grid';
 import Check from "@material-ui/icons/Check";
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from '@material-ui/core/Button';
+import UpdateMedicine from './../updateMedicine';
+
 
 function desc(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -68,11 +75,7 @@ class EnhancedTableHead extends React.Component {
       <TableHead>
         <TableRow>
           <TableCell padding="checkbox">
-            <Checkbox
-              indeterminate={numSelected > 0 && numSelected < rowCount}
-              checked={numSelected === rowCount}
-              onChange={onSelectAllClick}
-            />
+            
           </TableCell>
           {rows.map(
             row => (
@@ -99,6 +102,9 @@ class EnhancedTableHead extends React.Component {
             ),
             this,
           )}
+          <TableCell padding="delete">
+            
+          </TableCell>
         </TableRow>
       </TableHead>
     );
@@ -240,7 +246,11 @@ class EnhancedTable extends React.Component {
     MOnChange: false,
     MedFiltered:[],
     MedData:this.props.medList,
-    MedFlag:false
+    MedFlag:false,
+    medDetails:'',
+    UpdateDialog:false,
+    deletefalse:true,
+    deleteDialog:false
   };
 
   componentDidMount(){
@@ -274,26 +284,30 @@ class EnhancedTable extends React.Component {
     this.setState({ selected: [] });
   };
 
-  handleClick = (event, id) => {
-    const { selected } = this.state;
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
+  // Update = (event, id, obj) => {
+  //   this.setState({
+  //     medDetails:obj
+  //   })
+  //   console.log(obj)
+  //   const { selected } = this.state;
+  //   const selectedIndex = selected.indexOf(id);
+  //   let newSelected = [];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, id);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(
+  //       selected.slice(0, selectedIndex),
+  //       selected.slice(selectedIndex + 1),
+  //     );
+  //   }
 
-    this.setState({ selected: newSelected });
-  };
+  //   this.setState({ selected: newSelected });
+  // };
 
   handleChangePage = (event, page) => {
     this.setState({ page });
@@ -332,6 +346,29 @@ class EnhancedTable extends React.Component {
       MedFiltered:filtered,
       MOnChange:true
     })
+  };
+  handleDelete=()=>{
+    this.setState({
+      deletefalse:false,
+      deleteDialog:true,
+      UpdateDialog:false,
+    })
+  }
+  handleCloseDelete=()=>{
+    this.setState({
+      deletefalse:true,
+      deleteDialog:false,
+      UpdateDialog:false
+    }) 
+  }
+  handleShowUpdateDialog=(obj)=>{
+    this.setState({
+      UpdateDialog:true,
+      medDetails:obj
+    })
+  }
+  handleClose = () => {
+    this.setState({ UpdateDialog: false });
   };
   render() {
     const { classes , name} = this.props;
@@ -444,7 +481,7 @@ class EnhancedTable extends React.Component {
                   return (
                     <TableRow
                       className={classes.TableCell}
-                      onClick={event => this.handleClick(event, n.medicine_id)}
+                      onClick={event => this.handleShowUpdateDialog(n)}
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
@@ -452,13 +489,19 @@ class EnhancedTable extends React.Component {
                       selected={isSelected}
                     >
                       <TableCell padding="checkbox">
-                        <Checkbox checked={isSelected} />
+                        
                       </TableCell>
                       <TableCell component="th" scope="row" padding="none">{n.product_name}</TableCell>
                       <TableCell align="right">{n.type}</TableCell>
                       <TableCell align="right">{n.generic}</TableCell>
                       <TableCell align="right">{n.strength}</TableCell>
                       <TableCell align="right">{n.indication}</TableCell>
+                      <TableCell padding="delete">
+                        <IconButton onClick={this.handleDelete}>
+                          <DeleteIcon/>
+                        </IconButton>
+                        
+                      </TableCell>
                     </TableRow>
                   );
                 })}
@@ -485,6 +528,37 @@ class EnhancedTable extends React.Component {
           onChangePage={this.handleChangePage}
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
+        <Dialog
+            open={this.state.UpdateDialog && this.state.deletefalse}
+            onClose={this.handleClose}
+          >
+          <UpdateMedicine name={"Treatment Medicine"} obj={this.state.medDetails}/>
+          <DialogActions>
+              <Button onClick={this.handleClose} color="primary">
+                Ok
+              </Button>
+            </DialogActions>
+        </Dialog>
+        <Dialog
+            open={this.state.deleteDialog}
+            onClose={this.handleCloseDelete}
+          >
+          <DialogTitle>Are you Sure you want to delete?</DialogTitle>
+            <DialogContent>
+              
+      
+              
+            </DialogContent>
+          <DialogActions>
+              <Button onClick={this.handleCloseDelete} color="secondary">
+                Delete
+              </Button>
+              <Button onClick={this.handleCloseDelete} color="primary">
+                Cancel
+              </Button>
+              
+            </DialogActions>
+        </Dialog>
       </Paper>
     );
   }

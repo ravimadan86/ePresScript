@@ -16,6 +16,12 @@ import LastPageIcon from '@material-ui/icons/LastPage';
 import TableHead from "@material-ui/core/TableHead/TableHead";
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import Button from '@material-ui/core/Button';
+import UpdateMedicine from './../updateMedicine';
+
+
 
 const actionsStyles = theme => ({
   root: {
@@ -109,6 +115,7 @@ const styles = theme => ({
   medicineListSearch: {
     padding: 10,
   },
+  
 });
 
 class MedicineTableView extends React.Component {
@@ -121,7 +128,9 @@ class MedicineTableView extends React.Component {
       page: 0,
       rowsPerPage: 5,
       searchOn:false,
-      filtered:[]
+      filtered:[],
+      UpdateDialog: false,
+      medDetails:''
     };
   }
 
@@ -153,6 +162,15 @@ class MedicineTableView extends React.Component {
       rows : this.props.medicineState.medicineList
     });
   }
+  handleShowUpdateDialog=(obj)=>{
+    this.setState({
+      UpdateDialog:true,
+      medDetails:obj
+    })
+  }
+  handleClose = () => {
+    this.setState({ UpdateDialog: false });
+  };
   render() {
     const { classes } = this.props;
     const { rows, rowsPerPage, page } = this.state;
@@ -161,7 +179,7 @@ class MedicineTableView extends React.Component {
     if (rows.length !== 0){
       medTable = !this.state.searchOn ?rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map( (medicine, index) => {
         return(
-          <TableRow key={index}>
+          <TableRow key={index} onClick={()=>this.handleShowUpdateDialog(medicine)}>
             <TableCell component="th" scope="row">{medicine.product_name}</TableCell>
             <TableCell component="th" scope="row">{medicine.types}</TableCell>
             <TableCell component="th" scope="row">{medicine.strength}</TableCell>
@@ -170,7 +188,7 @@ class MedicineTableView extends React.Component {
         )
       }):this.state.filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((medicine, index) => {
         return(
-          <TableRow key={index}>
+          <TableRow key={index} onClick={this.handleShowUpdateDialog}>
             <TableCell component="th" scope="row">{medicine.product_name}</TableCell>
             <TableCell component="th" scope="row">{medicine.types}</TableCell>
             <TableCell component="th" scope="row">{medicine.strength}</TableCell>
@@ -225,6 +243,17 @@ class MedicineTableView extends React.Component {
             </TableFooter>
           </Table>
         </div>
+        <Dialog
+            open={this.state.UpdateDialog}
+            onClose={this.handleClose}
+          >
+          <UpdateMedicine name={"Normal Medicine"} obj={this.state.medDetails}/>
+          <DialogActions>
+              <Button onClick={this.handleClose} color="primary">
+                Ok
+              </Button>
+            </DialogActions>
+        </Dialog>
       </Paper>
     );
   }
