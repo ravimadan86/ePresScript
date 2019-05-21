@@ -250,7 +250,8 @@ class EnhancedTable extends React.Component {
     medDetails:'',
     UpdateDialog:false,
     deletefalse:true,
-    deleteDialog:false
+    deleteDialog:false,
+    deletableMed:''
   };
 
   componentDidMount(){
@@ -347,11 +348,12 @@ class EnhancedTable extends React.Component {
       MOnChange:true
     })
   };
-  handleDelete=()=>{
+  handleDelete=(med)=>{
     this.setState({
       deletefalse:false,
       deleteDialog:true,
       UpdateDialog:false,
+      deletableMed:med
     })
   }
   handleCloseDelete=()=>{
@@ -497,7 +499,7 @@ class EnhancedTable extends React.Component {
                       <TableCell align="right">{n.strength}</TableCell>
                       <TableCell align="right">{n.indication}</TableCell>
                       <TableCell padding="delete">
-                        <IconButton onClick={this.handleDelete}>
+                        <IconButton onClick={()=>this.handleDelete(n)}>
                           <DeleteIcon/>
                         </IconButton>
                         
@@ -546,7 +548,7 @@ class EnhancedTable extends React.Component {
           <DialogTitle>Are you Sure you want to delete?</DialogTitle>
             <DialogContent>
               
-      
+                <Typography>{this.state.deletableMed.product_name}</Typography>
               
             </DialogContent>
           <DialogActions>

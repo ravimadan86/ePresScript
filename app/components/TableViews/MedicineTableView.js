@@ -18,8 +18,12 @@ import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import UpdateMedicine from './../updateMedicine';
+import { Typography } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
 
@@ -130,7 +134,10 @@ class MedicineTableView extends React.Component {
       searchOn:false,
       filtered:[],
       UpdateDialog: false,
-      medDetails:''
+      medDetails:'',
+      deletefalse:true,
+      deleteDialog:false,
+      deletableMed:''
     };
   }
 
@@ -171,6 +178,21 @@ class MedicineTableView extends React.Component {
   handleClose = () => {
     this.setState({ UpdateDialog: false });
   };
+  handleDelete=(med)=>{
+    this.setState({
+      deletefalse:false,
+      deleteDialog:true,
+      UpdateDialog:false,
+      deletableMed:med
+    })
+  }
+  handleCloseDelete=()=>{
+    this.setState({
+      deletefalse:true,
+      deleteDialog:false,
+      UpdateDialog:false
+    }) 
+  }
   render() {
     const { classes } = this.props;
     const { rows, rowsPerPage, page } = this.state;
@@ -182,17 +204,29 @@ class MedicineTableView extends React.Component {
           <TableRow key={index} onClick={()=>this.handleShowUpdateDialog(medicine)}>
             <TableCell component="th" scope="row">{medicine.product_name}</TableCell>
             <TableCell component="th" scope="row">{medicine.types}</TableCell>
+            <TableCell component="th" scope="row">{medicine.generic}</TableCell>
             <TableCell component="th" scope="row">{medicine.strength}</TableCell>
             <TableCell component="th" scope="row">{medicine.indication}</TableCell>
+            <TableCell component="th" scope="row">
+              <IconButton onClick={()=>this.handleDelete(medicine)}>
+                <DeleteIcon/>
+              </IconButton>
+            </TableCell>
           </TableRow>
         )
       }):this.state.filtered.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((medicine, index) => {
         return(
-          <TableRow key={index} onClick={this.handleShowUpdateDialog}>
+          <TableRow key={index} onClick={()=>this.handleShowUpdateDialog(medicine)}>
             <TableCell component="th" scope="row">{medicine.product_name}</TableCell>
             <TableCell component="th" scope="row">{medicine.types}</TableCell>
+            <TableCell component="th" scope="row">{medicine.generic}</TableCell>
             <TableCell component="th" scope="row">{medicine.strength}</TableCell>
             <TableCell component="th" scope="row">{medicine.indication}</TableCell>
+            <TableCell component="th" scope="row">
+              <IconButton onClick={()=>this.handleDelete(medicine)}>
+                <DeleteIcon/>
+              </IconButton>
+            </TableCell>
           </TableRow>
         )
       });
@@ -212,8 +246,10 @@ class MedicineTableView extends React.Component {
               <TableRow>
                 <TableCell>Name</TableCell>
                 <TableCell>Type</TableCell>
+                <TableCell>Generic</TableCell>
                 <TableCell>Strength</TableCell>
                 <TableCell>Indication</TableCell>
+                <TableCell> </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -243,8 +279,9 @@ class MedicineTableView extends React.Component {
             </TableFooter>
           </Table>
         </div>
+        {/* Details and Update Dialog */}
         <Dialog
-            open={this.state.UpdateDialog}
+            open={this.state.UpdateDialog && this.state.deletefalse}
             onClose={this.handleClose}
           >
           <UpdateMedicine name={"Normal Medicine"} obj={this.state.medDetails}/>
@@ -252,6 +289,27 @@ class MedicineTableView extends React.Component {
               <Button onClick={this.handleClose} color="primary">
                 Ok
               </Button>
+            </DialogActions>
+        </Dialog>
+        {/* Delete Dialog */}
+        <Dialog
+            open={this.state.deleteDialog}
+            onClose={this.handleCloseDelete}
+          >
+          <DialogTitle>Are you Sure you want to delete?</DialogTitle>
+            <DialogContent>
+              
+                  <Typography>{this.state.deletableMed.product_name}</Typography>
+              
+            </DialogContent>
+          <DialogActions>
+              <Button onClick={this.handleCloseDelete} color="secondary">
+                Delete
+              </Button>
+              <Button onClick={this.handleCloseDelete} color="primary">
+                Cancel
+              </Button>
+              
             </DialogActions>
         </Dialog>
       </Paper>
