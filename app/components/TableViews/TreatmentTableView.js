@@ -138,7 +138,7 @@ class TreatmentTableView extends React.Component {
       filtered:[],
       openMedicineDetail: false,
       medicine:[],
-      treatmentName: '',
+      treatmentDetails: '',
       MedicineList: this.props.medicineState.medicineList,
     };
   }
@@ -182,7 +182,7 @@ class TreatmentTableView extends React.Component {
     this.setState({
       openMedicineDetail: true,
       medicine: treatment_medicine_list,
-      treatmentName: name
+      treatmentDetails: treatment
     });
   }
 
@@ -204,7 +204,7 @@ class TreatmentTableView extends React.Component {
     console.log(this.props);
     console.log(this.state);
     const { classes , saveMedicine, updateTreatmentMedicine} = this.props;
-    const { rows, rowsPerPage, page , medicine , treatmentName, MedicineList} = this.state;
+    const { rows, rowsPerPage, page , medicine , treatmentDetails, MedicineList} = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
     let medTable = null;
     if (rows.length !==0 ){
@@ -243,7 +243,7 @@ class TreatmentTableView extends React.Component {
               <TreatmentMedicineView
                 medicine={medicine}
                 medList={MedicineList}
-                name={treatmentName}
+                treatmentDetails={treatmentDetails}
                 saveMedicine={saveMedicine}
               />
             </DialogContent>

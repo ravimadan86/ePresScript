@@ -23,12 +23,15 @@ import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Grid from '@material-ui/core/Grid';
 import Check from "@material-ui/icons/Check";
+import Edit from "@material-ui/icons/Create";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import UpdateMedicine from './../updateMedicine';
+import { FormControl } from '@material-ui/core';
+
 
 
 function desc(a, b, orderBy) {
@@ -146,54 +149,41 @@ const toolbarStyles = theme => ({
   },
 });
 
-let EnhancedTableToolbar = props => {
-  const { numSelected, classes , name } = props;
+// let EnhancedTableToolbar = props => {
+//   const { numSelected, classes , name } = props;
+//   let treatmentId = props.treatmentDetails;
+  
+//   return (
+//     <Toolbar
+//       className={classNames(classes.root, {
+//         [classes.highlight]: numSelected > 0,
+//       })}
+//     >
+//       <div className={classes.title}>      
+//         <Typography variant="h6" id="tableTitle">
+//           Medicines under {name} Treatment
+//           {/* name -> input ,  */}
+//         </Typography>
+//         <Tooltip title="Edit Treatment Name">
+//           <IconButton style={{marginLeft:'95%',marginTop:'-45px'}} onClick={()=>this.handleEditTreatmentName(treatmentId)}>
+//             <Edit/>
+//           </IconButton>
+//         </Tooltip>
+//       </div>
+//       <div className={classes.spacer} />
+//       <div className={classes.actions}>
 
-  return (
-    <Toolbar
-      className={classNames(classes.root, {
-        [classes.highlight]: numSelected > 0,
-      })}
-    >
-      <div className={classes.title}>
-        {numSelected > 0 ? (
-          <Typography color="inherit" variant="subtitle1">
-            {numSelected} selected
-          </Typography>
-        ) : (
-          <Typography variant="h6" id="tableTitle"> */
-            Medicines under {name} Treatment
-            {/* name -> input ,  */}
-          </Typography>
-        )}
-      </div>
-      <div className={classes.spacer} />
-      <div className={classes.actions}>
+//       </div>
+//     </Toolbar>
+//   );
+// };
 
-        {numSelected > 0 ? (
-          <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        ) : (
-          <Tooltip title="Filter list">
-            <IconButton aria-label="Filter list">
-              <FilterListIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-      </div>
-    </Toolbar>
-  );
-};
+// EnhancedTableToolbar.propTypes = {
+//   classes: PropTypes.object.isRequired,
+//   numSelected: PropTypes.number.isRequired,
+// };
 
-EnhancedTableToolbar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  numSelected: PropTypes.number.isRequired,
-};
-
-EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
+// EnhancedTableToolbar = withStyles(toolbarStyles)(EnhancedTableToolbar);
 
 const styles = theme => ({
   root: {
@@ -230,6 +220,15 @@ const styles = theme => ({
     overflowY:'auto',
     overflowX:'hidden'
   },
+  title: {
+    flex: '0 0 auto',
+    padding:'2%'
+  },
+  addMedReqTextFields: {
+    marginLeft: theme.spacing.unit,
+    marginRight: theme.spacing.unit,
+
+},
 });
 
 class EnhancedTable extends React.Component {
@@ -249,8 +248,10 @@ class EnhancedTable extends React.Component {
     MedFlag:false,
     medDetails:'',
     UpdateDialog:false,
-    deletefalse:true,
     deleteDialog:false,
+    editDialog:false,
+    editableTreatment:'',
+    editedTreatmentName:'',
     deletableMed:''
   };
 
@@ -266,6 +267,7 @@ class EnhancedTable extends React.Component {
       })
     }
   }
+  
   handleRequestSort = (event, property) => {
     const orderBy = property;
     let order = 'desc';
@@ -348,19 +350,38 @@ class EnhancedTable extends React.Component {
       MOnChange:true
     })
   };
+  handleClickEditTreatment=(treatment)=>{
+    this.setState({
+      editDialog:true,
+      editableTreatment:treatment,
+      editedTreatmentName:treatment.name
+    })
+  }
+  handleCloseEditTreatment=()=>{
+    this.setState({
+      editDialog:false,
+    })
+  }
+  handleEditTreatmentName=()=>{
+    console.log(this.state.editedTreatmentName);
+    this.setState({
+      editDialog:false,
+    })
+  }
+  handleEditTreatmentChangeKeyword=(event)=>{
+    this.setState({
+      editedTreatmentName: event.target.value
+    })
+  }
   handleDelete=(med)=>{
     this.setState({
-      deletefalse:false,
       deleteDialog:true,
-      UpdateDialog:false,
       deletableMed:med
     })
   }
   handleCloseDelete=()=>{
     this.setState({
-      deletefalse:true,
-      deleteDialog:false,
-      UpdateDialog:false
+      deleteDialog:false
     }) 
   }
   handleShowUpdateDialog=(obj)=>{
@@ -385,9 +406,22 @@ class EnhancedTable extends React.Component {
         </li>
       )
     }):null;
+    let treatmentDetails = this.props.treatmentDetails;
+    let treatmentName = this.props.treatmentDetails.name;
     return (
       <Paper className={classes.root}>
-        <EnhancedTableToolbar numSelected={selected.length} name={name} />
+        {/* <EnhancedTableToolbar numSelected={selected.length} name={name} /> */}
+        <div className={classes.title}>      
+          <Typography variant="h6" id="tableTitle">
+            Medicines under {name} Treatment
+            {/* name -> input ,  */}
+          </Typography>
+          <Tooltip title="Edit Treatment Name">
+            <IconButton style={{marginLeft:'55%',marginTop:'-45px'}} onClick={()=>this.handleClickEditTreatment(treatmentDetails)}>
+              <Edit/>
+            </IconButton>
+          </Tooltip>
+        </div>
         <div style={{marginLeft:'1.4%'}}>
             <Grid container>
                 <Grid item xs={1}>
@@ -483,7 +517,7 @@ class EnhancedTable extends React.Component {
                   return (
                     <TableRow
                       className={classes.TableCell}
-                      onClick={event => this.handleShowUpdateDialog(n)}
+                      
                       role="checkbox"
                       aria-checked={isSelected}
                       tabIndex={-1}
@@ -493,16 +527,17 @@ class EnhancedTable extends React.Component {
                       <TableCell padding="checkbox">
                         
                       </TableCell>
-                      <TableCell component="th" scope="row" padding="none">{n.product_name}</TableCell>
-                      <TableCell align="right">{n.type}</TableCell>
-                      <TableCell align="right">{n.generic}</TableCell>
-                      <TableCell align="right">{n.strength}</TableCell>
-                      <TableCell align="right">{n.indication}</TableCell>
+                      <TableCell component="th" scope="row" padding="none" onClick={event => this.handleShowUpdateDialog(n)}>{n.product_name}</TableCell>
+                      <TableCell align="right" onClick={event => this.handleShowUpdateDialog(n)}>{n.type}</TableCell>
+                      <TableCell align="right" onClick={event => this.handleShowUpdateDialog(n)}>{n.generic}</TableCell>
+                      <TableCell align="right" onClick={event => this.handleShowUpdateDialog(n)}>{n.strength}</TableCell>
+                      <TableCell align="right" onClick={event => this.handleShowUpdateDialog(n)}>{n.indication}</TableCell>
                       <TableCell padding="delete">
-                        <IconButton onClick={()=>this.handleDelete(n)}>
-                          <DeleteIcon/>
-                        </IconButton>
-                        
+                        <Tooltip title="Delete">
+                          <IconButton onClick={()=>this.handleDelete(n)}>
+                              <DeleteIcon/>
+                          </IconButton>
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   );
@@ -531,7 +566,7 @@ class EnhancedTable extends React.Component {
           onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
         <Dialog
-            open={this.state.UpdateDialog && this.state.deletefalse}
+            open={this.state.UpdateDialog}
             onClose={this.handleClose}
           >
           <UpdateMedicine name={"Treatment Medicine"} obj={this.state.medDetails}/>
@@ -552,10 +587,39 @@ class EnhancedTable extends React.Component {
               
             </DialogContent>
           <DialogActions>
-              <Button onClick={this.handleCloseDelete} color="secondary">
+              <Button onClick={this.handleCloseDelete} color="secondary" variant="contained"> 
                 Delete
               </Button>
               <Button onClick={this.handleCloseDelete} color="primary">
+                Cancel
+              </Button>
+              
+            </DialogActions>
+        </Dialog>
+        <Dialog
+            open={this.state.editDialog}
+            onClose={this.handleCloseEditTreatment}
+          >
+          <DialogTitle>Update Treatment Name:</DialogTitle>
+            <DialogContent>
+              
+              <TextField
+                id=""
+                label="Treatment Name"
+                className={classes.addMedReqTextFields}
+                value={this.state.editedTreatmentName}
+                onChange={this.handleEditTreatmentChangeKeyword.bind(this)}
+                margin="normal"
+              />
+              
+              
+              
+            </DialogContent>
+          <DialogActions>
+              <Button onClick={this.handleEditTreatmentName} color="secondary" variant="contained"> 
+                Update
+              </Button>
+              <Button onClick={this.handleCloseEditTreatment} color="primary">
                 Cancel
               </Button>
               
