@@ -206,7 +206,6 @@ const styles = theme => ({
     width:'80%',
     margin:'0px',
     padding:'0px',
-    marginLeft:'-30px'
   },
   searchKeyword:{
     cursor:'pointer',
@@ -424,11 +423,11 @@ class EnhancedTable extends React.Component {
         </div>
         <div style={{marginLeft:'1.4%'}}>
             <Grid container>
-                <Grid item xs={1}>
+                {/* <Grid item xs={1}>
                   <Fab color="secondary" size="small" disabled style={{marginTop:'10px'}}>
-                    <AddIcon />
+                    
                   </Fab>
-                </Grid>
+                </Grid> */}
                 <Grid item xs={3}>
                   <TextField
                     id=""
@@ -436,7 +435,7 @@ class EnhancedTable extends React.Component {
                     value={this.state.NewMedicine}
                     onChange={this.MedicineSearchKeywords}
                     margin="normal"
-                    style={{fontSize:'14px',width:'85%',margin:'0px', padding:'0px',marginLeft:'-30px'}}
+                    style={{fontSize:'14px',width:'85%',margin:'0px', padding:'0px'}}
                   />
                   {!this.state.NewMedicine=="" && !this.state.MedFlag?
                   <div style={{marginLeft:'-65px',maxHeight:'200px', width:'100%', position:'relative', overflow:'auto',padding:'0px',marginTop:'0px'}}>
@@ -479,7 +478,7 @@ class EnhancedTable extends React.Component {
                     style={{fontSize:'14px'}}
                   />
                 </Grid>
-                <Grid item xs={2}>
+                <Grid item xs={3}>
                   <TextField
                     id="remark"
                     label="Remark"
@@ -489,13 +488,15 @@ class EnhancedTable extends React.Component {
                     margin="normal"
                     style={{fontSize:'14px'}}
                   />
-                  <IconButton
-                    onClick={this.addAll}
-                    disabled={!this.state.TempMedValue}
-                    style={{marginTop:'-40px',marginLeft:'70%'}}
-                  >
-                    <Check style={{color:'#7f7f7f'}}/>
-                  </IconButton>
+                  <Tooltip title="Add Medicine">
+                    <IconButton
+                      onClick={this.addAll}
+                      //disabled={!this.state.TempMedValue}
+                      style={{marginTop:'-40px',marginLeft:'80%'}}
+                    >
+                      <AddIcon style={{color:'#7f7f7f'}}/>
+                    </IconButton>
+                  </Tooltip>
                 </Grid>
               </Grid>
         </div>

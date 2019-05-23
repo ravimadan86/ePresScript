@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
+import Tooltip from '@material-ui/core/Tooltip';
 import TableCell from '@material-ui/core/TableCell';
 import TableFooter from '@material-ui/core/TableFooter';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -24,7 +25,9 @@ import DialogTitle from "@material-ui/core/DialogTitle/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions/DialogActions";
-
+import Grid from '@material-ui/core/Grid';
+import AddIcon from '@material-ui/icons/Add';
+import TextField from '@material-ui/core/TextField';
 const actionsStyles = theme => ({
   root: {
     flexShrink: 0,
@@ -262,6 +265,46 @@ class TreatmentTableView extends React.Component {
         <IconButton className={classes.iconButton} aria-label="Search">
           <SearchIcon />
         </IconButton>
+        </div>
+        <div style={{padding:'3%',marginTop:'-20px'}}>
+        <Grid container>
+                {/* <Grid item xs={1}>
+                  <Fab color="secondary" size="small" disabled style={{marginTop:'10px'}}>
+                    
+                  </Fab>
+                </Grid> */}
+                {/*This Add Treatment Portion Will be modified */}
+                <Grid item xs={4}>
+                  <TextField
+                    id=""
+                    label="Add New Treatment"
+                    value={this.state.NewMedicine}
+                    onChange={this.MedicineSearchKeywords}
+                    margin="normal"
+                    style={{fontSize:'14px',width:'85%',margin:'0px', padding:'0px'}}
+                  />
+                  
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    id=""
+                    label="Description..."
+                    value={this.state.NewMedicine}
+                    onChange={this.MedicineSearchKeywords}
+                    margin="normal"
+                    style={{fontSize:'14px',width:'85%',margin:'0px', padding:'0px'}}
+                  />
+                  <Tooltip title="Add Treatment">
+                    <IconButton
+                      onClick={this.addAll}
+                      //disabled={!this.state.TempMedValue}
+                      style={{marginTop:'-40px',marginLeft:'90%'}}
+                    >
+                      <AddIcon style={{color:'#7f7f7f'}}/>
+                    </IconButton>
+                  </Tooltip>
+                </Grid>
+              </Grid>
         </div>
         <div className={classes.tableWrapper}>
           <Table className={classes.table}>

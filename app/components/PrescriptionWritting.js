@@ -241,7 +241,9 @@ class PrescriptionWrittng extends React.Component{
       Sex: '',
       Mobile: '',
       Email: '',
-      PatientId: ''
+      PatientId: '',
+
+      Medicines:[] // For All medicines
     };
   }
 
@@ -926,6 +928,36 @@ class PrescriptionWrittng extends React.Component{
       }
     })
   };
+  handleSaveMedicine=()=>{
+    console.log("Save Medicine");
+    
+    let size = this.state.MedList.length;
+    
+    for(let i=0;i<size;i++){
+      
+      let MedName = this.state.MedList[i].name;
+      let TypeName = this.state.TypeList[i].name;
+      let strengthName = this.state.StrenList[i].name;
+      let FrequencyName = this.state.FreqList[i].name;
+      let RemarkName = this.state.RemList[i].name; 
+      let Idval = `${this.state.Medicines.length + 1}`;
+      
+      //Checking if there is any duplicate for safety, if Save button is double pressed.
+      let fl = 1;
+      let loopMed = this.state.Medicines.map((j)=>{
+        if(j.product_name.toUpperCase() === MedName.toUpperCase() && j.strength.toUpperCase() === strengthName.toUpperCase()){
+          fl = 0;
+        }
+      });
+
+      if(fl==1){
+        this.setState((prevState) => ({
+          Medicines: [...prevState.Medicines, {id: Idval, product_name:MedName, type:TypeName, strength: strengthName, frequency: FrequencyName, remark: RemarkName}]
+        }));
+      }
+    }
+    
+  }
   render(){
     console.log("Props " , this.props);
     console.log("State " , this.state);
@@ -1511,6 +1543,7 @@ class PrescriptionWrittng extends React.Component{
             </IconButton>,
           ]}
         />
+        <Button variant="contained" onClick={this.handleSaveMedicine}>Save</Button>
       </div>
     );
   }
