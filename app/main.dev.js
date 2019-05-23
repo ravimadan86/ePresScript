@@ -12,8 +12,9 @@
  */
 import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
+import {pdfjs} from "react-pdf";
 const {ipcMain} = require('electron');
-
+const fs = require('fs');
 let workerWindow=null;
 // if (process.env.NODE_ENV === 'production') {
 //
@@ -41,6 +42,8 @@ let workerWindow=null;
 // }
 
 let mainWindow = null;
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -94,7 +97,7 @@ app.on('ready', async () => {
 
   });
   workerWindow = new BrowserWindow({show: false, allowEval: true});
-  workerWindow.loadURL("file://" + __dirname + "/test.html");
+  workerWindow.loadURL("file://" + __dirname + "/prescription.html");
   // workerWindow.hide();
   workerWindow.webContents.closeDevTools();
   workerWindow.on("closed", () => {
@@ -145,9 +148,23 @@ ipcMain.on("printPDF", (event: any, content: any) => {
 // when worker window is ready
 ipcMain.on("readyToPrintPDF", (event, options) => {
   console.log("readyToPrintPDF");
+  console.log(options);
   workerWindow.webContents.print(options);
 });
 
 ipcMain.on('fetch-system-printers', (event, arg) => {
   event.returnValue = mainWindow.webContents.getPrinters();
 });
+
+ipcMain.on('generate-pdf', (event, arg) => {
+  console.log("generate pdf request");
+  workerWindow.webContents.printToPDF({}, (error, data) => {
+    if (error) throw error;
+    event.returnValue = data;
+    fs.writeFile('./app/print.pdf', data, (error) => {
+      if (error) throw error;
+      console.log('Write PDF successfully.');
+    })
+  });
+});
+

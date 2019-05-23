@@ -17,7 +17,7 @@ import Grid from '@material-ui/core/Grid';
 const ipcRenderer = require("electron").ipcRenderer;
 import {IconSettingsPrinter , IconSettingsDocument} from '../assets';
 import Switch from '@material-ui/core/Switch';
-
+import { Document } from 'react-pdf';
 
 const styles = theme => ({
   root: {
@@ -90,15 +90,20 @@ class Settings extends React.Component{
       defaultPrinter: '',
       backgroundPrint: true,
       expanded: null,
+      document: ipcRenderer.sendSync("generate-pdf"),
+      numPages: null,
+      pageNumber: 1,
     };
   }
 
   componentDidMount(){
+
     this.setState( {
       printers : this.props.systemEnvState.printers,
       defaultPrinter: this.props.settingsState.defaultPrinter,
-      backgroundPrint: this.props.settingsState.backgroundPrint
-    })
+      backgroundPrint: this.props.settingsState.backgroundPrint,
+    });
+
   }
 
   componentDidUpdate(prevProps){
@@ -153,20 +158,29 @@ class Settings extends React.Component{
         deviceName: p
       }
     };
-
     console.log("Test print request", printerObj);
     ipcRenderer.send("printPDF", printerObj);
   };
-
+  updateTemlate = () => (event)=>{
+    event.preventDefault();
+    console.log("PDF GENERATE REQUEST");
+    console.log();
+  };
+  onLoadSuccess = ({ numPages }) => {
+    this.setState({ numPages });
+  };
+  onRenderSuccess = (page) => {
+    console.log(page.originalHeight);
+  };
   render(){
     const { classes } = this.props;
-    const { value , printers } = this.state;
+    const { value , printers, document } = this.state;
     console.log("Inside Settings Component");
     console.log(this.state);
     console.log(this.props);
   // console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
     const { expanded } = this.state;
-    
+    const { pageNumber, numPages } = this.state;
 
     return(
       <div className={classes.root}>
@@ -221,7 +235,24 @@ class Settings extends React.Component{
                 value="backgroundPrint"
               />
             </span>
+            <div>
+              <div>
+                <Document
+                  file={{data: document}}
+                  onLoadSuccess={this.onLoadSuccess}
+                >
+                  {/*<Page onRenderSuccess={this.onRenderSuccess} pageNumber={1} />*/}
+                </Document>
+                <p>Page {pageNumber} of {numPages}</p>
+              </div>
 
+              <div style={{ width: 600 }}>
+
+
+                <Button variant="contained" color="primary" className={classes.button} onClick={this.updateTemlate()}>Update Template</Button>
+
+              </div>
+            </div>
           </div>
         }
         {value === 2 && <TabContainer>Item Three</TabContainer>}

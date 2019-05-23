@@ -5,7 +5,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import { dependencies } from '../package.json';
-
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 export default {
   externals: [...Object.keys(dependencies || {})],
 
@@ -41,7 +41,10 @@ export default {
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production'
     }),
-
+    new CopyWebpackPlugin([{
+      from: 'node_modules/pdfjs-dist/build/pdf.worker.js',
+      to: 'pdf.worker.js'
+    }]),
     new webpack.NamedModulesPlugin()
   ]
 };

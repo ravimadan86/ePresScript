@@ -32,7 +32,7 @@ import Done  from '@material-ui/icons/DoneAll';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
 let update = require('immutability-helper');
-
+const ipcRenderer = require("electron").ipcRenderer;
 
 const styles = theme => ({
   root:{
@@ -148,7 +148,7 @@ const styles = theme => ({
   },
   listElem:{
     height:'20%' ,
-    maxHeight:'200px',
+    maxHeight:'150px',
     position:'relative',
     overflowY:'hidden',
     overflowX:'hidden',
@@ -177,7 +177,10 @@ const styles = theme => ({
   },
   centerPaneContentFooter:{
     height:'30%'
-  }
+  },
+  footer:{
+    flexShrink: 0
+}
 });
 
 
@@ -244,7 +247,83 @@ class PrescriptionWrittng extends React.Component{
       PatientId: ''
     };
   }
+  printPrescription = () =>{
+    console.log("Print Prescription request");
+    let medList = this.state.MedList;
+    let freqList = this.state.FreqList;
+    let strenList = this.state.StrenList;
+    let remarkList = this.state.RemList;
+    let typeList  =this.state.TypeList;
 
+    const templateData = {
+      header_center_img : 'data:image/gif;base64,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',
+      header_left_img:'',
+      header_right_img:'',
+      content_main_right_rx_img: 'data:image/png;base64,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',
+      footer_img:'',
+      header_center_text: {
+        text1:'123456789'
+      },
+      header_left_text: {
+        dr_name: 'DR. Ziaour Rahman',
+        dr_education: 'M.B.B.S D.EU',
+        dr_specialist: 'Medical Officer (Ortho Surgery)',
+        education_institute: 'Sher-e-bangla medical college & hospital, Borishal',
+        dr_reg: 'A-65874'
+      },
+      header_right_text:{
+        chamber_name : 'Chamber Name ',
+        chamber_address: ' xxxxx, yyyy ,Dhaka -1234',
+        chamber_timing: 'Monday to Friday 08:00Am to 2:00PM'
+      },
+      header_footer_text:'',
+      is_header_center_text: false,
+      is_header_left_text: false,
+      is_header_right_text: false,
+      is_footer_text: false,
+      layout_print_setting:{
+        print_obj: true,
+        header: 7, //in cm
+        content: 0,
+        footer: 0,
+        patient_detail: 1,  //in cm
+        font_size: 'small', //font sizes are small, medium or big
+        footer_enable: false
+      },
+      patient:{
+        name: `Name: ${this.state.PatientName}`,
+        sex: `Sex: ${this.state.Sex}`,
+        age: `Age: ${this.state.Age}Yrs`,
+        id: 'PID: 123456789',
+        date: `Date: ${new Date().getDate()}`
+      },
+      cc: this.props.prescriptionState.cc,
+      oe: this.props.prescriptionState.oe,
+      tests: this.props.prescriptionState.tests,
+      treatment: this.props.prescriptionState.diagnosis,
+      medicines: [ {id:1 ,product_name:"Vitamin A", type: "capsule" , strength: "50mg", frequency: "1+1+1" , remark:"7 days"}, {id:2 ,product_name:"Vitamin B-Complex", type: "tablet" , strength: "50mg", frequency: "1+0+1" , remark:"7 days"}, {id:3 ,product_name:"Thiamine", type: "tablet" , strength: "50mg", frequency: "1+1+1" , remark:"7 days"}],
+
+      advice: this.props.prescriptionState.advice
+
+
+    };
+
+    const printerObj={
+      content: templateData,
+      options: {
+        silent: this.props.settingsState.backgroundPrint, //Don't ask user for print settings. Default is false.
+        printBackground: true, //Also prints the background color and image of the web page. Default is false.
+        deviceName: this.props.settingsState.defaultPrinter
+      }
+    };
+    console.log(printerObj);
+
+    ipcRenderer.send("printPDF", printerObj);
+
+  };
+  clearPrescription = () =>{
+    console.log("Clear Prescription request");
+  };
   componentDidMount(){
     console.log(this.props.prescriptionState.cc);
     const {cc } = this.props.prescriptionState;
@@ -363,6 +442,8 @@ class PrescriptionWrittng extends React.Component{
     });
     this.props.deleteDiagnosis(i);
   };
+
+
   removeAllMedicine = i =>{
     let x =  i;
     console.log(x);
@@ -929,6 +1010,8 @@ class PrescriptionWrittng extends React.Component{
   render(){
     console.log("Props " , this.props);
     console.log("State " , this.state);
+    const followupDate = `${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`;
+    console.log(followupDate);
 
     const {
       patientName, patientAge, patientSex, patientMobile, patientEmail, advice, followupdate,
@@ -1475,10 +1558,26 @@ class PrescriptionWrittng extends React.Component{
                   : null}
                   </div>
               </div>
-              <div className={classes.centerPaneContentFooter}>
 
-                <h1>Footer</h1>
-              </div>
+              <footer className={classes.footer}>
+                <TextField
+                  id="date"
+                  label="Follow Up Date"
+                  type="date"
+                  defaultValue= "2017-05-24"
+                  className={classes.textField}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <Button variant="outlined" color="primary" className={classes.button} onClick={() => this.clearPrescription()}>
+                  Clear
+                </Button>
+                <Button variant="outlined" color="primary" className={classes.button} onClick={() => this.printPrescription()}>
+                  Print
+                </Button>
+              </footer>
+
             </Grid>
             <Grid item xs={3} className={classes.rightGrid}>
               <Info style={{fontSize:'18px',color:'orange'}}/>
