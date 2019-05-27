@@ -148,8 +148,6 @@ class Medicine extends Component {
         <div className={classes.addMedicineDialogueBox}>
 
           <Dialog
-            disableBackdropClick
-            disableEscapeKeyDown
             open={this.state.open}
             onClose={this.handleClose}
           >

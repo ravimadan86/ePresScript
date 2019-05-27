@@ -4,7 +4,10 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import PrescriptionWritting from '../components/PrescriptionWritting';
 import {setAdvice , setPatientAge, setCC, setMedicine , setOE , setPatientEmail,
-  setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests} from "../features/prescription";
+  setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests ,
+  deleteCC, updateCC , deleteOE , updateOE , updateTest, deleteTest, updateMedicineFequency, updateMedicineName,
+  updateMedicineRemark, updateMedicineStrength, updateMedicineType, deleteMedicine, deleteDiagnosis, setDiagnosis,
+  updateDiagnosis} from "../features/prescription";
 
 
 const mapStateToProps = state => ({
@@ -16,7 +19,10 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   setAdvice , setPatientAge, setCC, setMedicine , setOE , setPatientEmail,
-  setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests
+  setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests ,
+  deleteCC, updateCC , deleteOE , updateOE , updateTest, deleteTest, updateMedicineFequency, updateMedicineName,
+  updateMedicineRemark, updateMedicineStrength, updateMedicineType, deleteMedicine, deleteDiagnosis, setDiagnosis,
+  updateDiagnosis
 };
 
 class PrescriptionContainer extends Component {
@@ -29,9 +35,12 @@ class PrescriptionContainer extends Component {
 
   render() {
     const {
-      securityState , medicineState , treatmentState , setAdvice , setPatientAge, setCC, setMedicine ,
-      setOE , setPatientEmail, setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests,
-      prescriptionState
+      securityState , medicineState , treatmentState , prescriptionState ,
+      setAdvice , setPatientAge, setCC, setMedicine , setOE , setPatientEmail,
+      setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests ,
+      deleteCC, updateCC , deleteOE , updateOE , updateTest, deleteTest, updateMedicineFequency, updateMedicineName,
+      updateMedicineRemark, updateMedicineStrength, updateMedicineType, deleteMedicine, deleteDiagnosis, setDiagnosis,
+      updateDiagnosis
     } = this.props;
     return (
       <PrescriptionWritting
@@ -40,11 +49,27 @@ class PrescriptionContainer extends Component {
         medicineState={medicineState}
         prescriptionState={prescriptionState}
 
+        setDiagnosis={setDiagnosis}
+        updateDiagnosis={updateDiagnosis}
+        deleteDiagnosis={deleteDiagnosis}
         setCC={setCC}
+        updateCC={updateCC}
+        deleteCC={deleteCC}
         setOE={setOE}
-        setMedicine={setMedicine}
+        deleteOE={deleteOE}
+        updateOE={updateOE}
         setTests={setTests}
+        deleteTest={deleteTest}
+        updateTest={updateTest}
         setAdvice={setAdvice}
+
+        setMedicine={setMedicine}
+        deleteMedicine={deleteMedicine}
+        updateMedicineName={updateMedicineName}
+        updateMedicineFequency={updateMedicineFequency}
+        updateMedicineRemark={updateMedicineRemark}
+        updateMedicineStrength={updateMedicineStrength}
+        updateMedicineType={updateMedicineType}
 
         setPatientAge={setPatientAge}
         setPatientEmail={setPatientEmail}

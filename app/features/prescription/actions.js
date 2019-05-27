@@ -32,85 +32,86 @@ export const setCC = cc => ({
   type: constants.SET_PATIENT_CC,
   payload: cc
 });
+export const updateCC = cc => ({
+  type: constants.UPDATE_PATIENT_CC,
+  payload: cc
+});
+export const deleteCC = id => ({
+  type: constants.DELETE_ITEM_PATIENT_CC,
+  payload: id
+});
+
+export const setDiagnosis = diagnosis => ({
+  type: constants.SET_PATIENT_DIAGNOSIS,
+  payload: diagnosis
+});
+export const updateDiagnosis = diagnosis => ({
+  type: constants.UPDATE_PATIENT_DIAGNOSIS,
+  payload: diagnosis
+});
+export const deleteDiagnosis = id => ({
+  type: constants.DELETE_ITEM_PATIENT_DIAGNOSIS,
+  payload: id
+});
 export const setOE = oe => ({
   type: constants.SET_PATIENT_OE,
   payload: oe
 });
+export const updateOE = oe => ({
+  type: constants.UPDATE_PATIENT_OE,
+  payload: oe
+});
+export const deleteOE = id => ({
+  type: constants.DELETE_ITEM_PATIENT_OE,
+  payload: id
+});
+
 export const setTests = tests => ({
   type: constants.SET_PATIENT_TESTS,
   payload: tests
+});
+export const updateTest = tests => ({
+  type: constants.UPDATE_PATIENT_TESTS,
+  payload: tests
+});
+export const deleteTest = id => ({
+  type: constants.DELETE_ITEM_PATIENT_TESTS,
+  payload: id
 });
 export const setAdvice = advice => ({
   type: constants.SET_PATIENT_ADVICE,
   payload: advice
 });
-export const setMedicine = medicine => ({
+export const setMedicine = medicineObj => ({
   type: constants.SET_PATIENT_MEDICINE,
-  payload: medicine
+  medicine: medicineObj.medicine,
+  medtype : medicineObj.type,
+  strength: medicineObj.strength,
+  remark: medicineObj.remark,
+  frequency: medicineObj.frequency
+});
+export const updateMedicineName = medName => ({
+  type: constants.UPDATE_PATIENT_MEDICINE_NAME,
+  payload: medName
+});
+export const updateMedicineType = type => ({
+  type: constants.UPDATE_PATIENT_MEDICINE_TYPE,
+  payload: type
+});
+export const updateMedicineStrength = strength => ({
+  type: constants.UPDATE_PATIENT_MEDICINE_STRENGTH,
+  payload: strength
+});
+export const updateMedicineRemark = remark => ({
+  type: constants.UPDATE_PATIENT_MEDICINE_REMARK,
+  payload: remark
+});
+export const updateMedicineFequency = frequency => ({
+  type: constants.UPDATE_PATIENT_MEDICINE_FREQUENCY,
+  payload: frequency
 });
 
-
-
-export function saveSettings(data) {
-  return (dispatch , getState: Store) => {
-    const { securityState } = getState();
-    const { access_token } = securityState.user;
-
-    dispatch(request());
-    services.saveSettings(data, access_token)
-      .then(
-        (settings) => {
-          dispatch(success(data));
-        },
-        (error: any) => {
-          dispatch(failure(error));
-        }
-      );
-  };
-
-  function request() { return { type: constants.SETTINGS_SAVE_REQUEST} }
-  function success(settings: Object ){
-    return {
-      type: constants.SETTINGS_SAVE_SUCCESS, settings
-    }
-  }
-  function failure(error) {
-    return {
-      type: constants.SETTINGS_SAVE_FAILURE , error
-    }
-  }
-}
-
-export function fetchSettings() {
-  return (dispatch , getState: Store) => {
-    const { securityState } = getState();
-    const { access_token } = securityState.user;
-
-    dispatch(request());
-    services.fetchSettings()
-      .then(
-        (settings) => {
-          console.log("settings : ", settings);
-          const take_settings = {
-            default_printer: settings.dataValues.default_printer, background_print: settings.dataValues.background_print};
-          console.log(take_settings);
-          dispatch(success(take_settings));
-        },
-        (error: any) => {
-          dispatch(failure(error));
-        }
-      );
-  };
-
-  function request() { return { type: constants.SETTINGS_FETCH_REQUEST} }
-  function success(settings: Object ){
-    return {
-      type: constants.SETTINGS_FETCH_SUCCESS, settings
-    }
-  }
-  function failure(error) {
-    return {
-      type: constants.SETTINGS_FETCH_FAILURE , error
-    }
-  }
-}
+export const deleteMedicine = id => ({
+  type: constants.DELETE_PATIENT_MEDICINE,
+  payload: id
+});
