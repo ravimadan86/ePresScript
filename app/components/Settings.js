@@ -17,7 +17,8 @@ import Grid from '@material-ui/core/Grid';
 const ipcRenderer = require("electron").ipcRenderer;
 import {IconSettingsPrinter , IconSettingsDocument} from '../assets';
 import Switch from '@material-ui/core/Switch';
-import { Document } from 'react-pdf';
+import PDFViewer from 'mgr-pdf-viewer-react';
+import TextField from '@material-ui/core/TextField';
 
 const styles = theme => ({
   root: {
@@ -57,6 +58,27 @@ const styles = theme => ({
   rightIcon: {
     marginLeft: theme.spacing.unit,
   },
+  settingsTemplateLayoutRoot:{
+    width: "auto",
+    display: "flex",
+    margin: "0px"
+  },
+  settingsTemplateLayoutPreview:{
+    width:"auto%"
+  },
+  settingsTemplateLayoutOptions:{
+    width:"100%",
+    display: "flex",
+    flexDirection: "column"
+  },
+  LayoutOptionsContent:{
+    width:"auto",
+    margin:"0px",
+    display:"flex"
+  },
+  layoutOptionsTextfield:{
+    margin:"10px"
+  }
 });
 
 
@@ -91,8 +113,7 @@ class Settings extends React.Component{
       backgroundPrint: true,
       expanded: null,
       document: ipcRenderer.sendSync("generate-pdf"),
-      numPages: null,
-      pageNumber: 1,
+      printTemplate: false
     };
   }
 
@@ -123,6 +144,10 @@ class Settings extends React.Component{
     };
     this.props.saveSettings(settings);
     //this.setState({ [name]: event.target.checked });
+  };
+  handleprintTemplateChange = name => event =>{
+    console.log(this.state);
+    this.setState({ printTemplate: event.target.checked});
   };
 
   handleTabChange = (event, value) => {
@@ -172,6 +197,7 @@ class Settings extends React.Component{
   onRenderSuccess = (page) => {
     console.log(page.originalHeight);
   };
+
   render(){
     const { classes } = this.props;
     const { value , printers, document } = this.state;
@@ -179,24 +205,15 @@ class Settings extends React.Component{
     console.log(this.state);
     console.log(this.props);
   // console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
-    const { expanded } = this.state;
-    const { pageNumber, numPages } = this.state;
+    const { expanded, printTemplate } = this.state;
 
     return(
       <div className={classes.root}>
         <AppBar position="static" color="default">
-          <Tabs
-            value={value}
-            onChange={this.handleTabChange}
-            variant="scrollable"
-            scrollButtons="on"
-            indicatorColor="primary"
-            textColor="primary"
-          >
-
+          <Tabs value={value} onChange={this.handleTabChange} variant="scrollable" scrollButtons="on" indicatorColor="primary" textColor="primary">
             <Tab label="Printers" icon= {<IconSettingsPrinter />} />
             <Tab label="Print Settings" icon={<FavoriteIcon />} />
-            <Tab label="Item Three" icon={<PersonPinIcon />} />
+            <Tab label="Template Settings" icon={<PersonPinIcon />} />
           </Tabs>
         </AppBar>
 
@@ -228,34 +245,66 @@ class Settings extends React.Component{
         {value === 1 &&
           <div>
             <span>
-              Background Print
+            Background Print
               <Switch
                 checked={this.state.backgroundPrint}
                 onChange={this.handlebackgroundPrintChange('backgroundPrint')}
                 value="backgroundPrint"
               />
             </span>
-            <div>
-              <div>
-                <Document
-                  file={{data: document}}
-                  onLoadSuccess={this.onLoadSuccess}
-                >
-                  {/*<Page onRenderSuccess={this.onRenderSuccess} pageNumber={1} />*/}
-                </Document>
-                <p>Page {pageNumber} of {numPages}</p>
+            </div>
+        }
+        {value === 2 &&
+          <div className= {classes.settingsTemplateLayoutRoot}>
+
+            <div className= {classes.settingsTemplateLayoutPreview}>
+              <PDFViewer document={{"binary": document  }} scale={.9} hideNavbar={true}/>
+            </div>
+
+            <div className= {classes.settingsTemplateLayoutOptions}>
+
+            <span>
+            Use default Template
+              <Switch
+                checked={printTemplate}
+                onChange={this.handleprintTemplateChange('printTemplate')}
+                value="printTemplate"
+              />
+            </span>
+              <div className= {classes.LayoutOptionsContent}>
+                <div className= {classes.LayoutOptionsContentLeft}>
+                  <TextField disabled={!printTemplate} id="dr_name" label="Dr Name" value= "DR. Ziaour Rahman" className={classes.layoutOptionsTextfield}/>
+                  <TextField disabled={!printTemplate} id="dr_education" label="Education" value="M.B.B.S D.EU" placeholder="Placeholder" className={classes.layoutOptionsTextfield} />
+                  <TextField disabled={!printTemplate} id="dr_specialist" label="Specialist" value="Medical Officer (Ortho Surgery)" placeholder="Placeholder" className={classes.layoutOptionsTextfield}/>
+                  <TextField disabled={!printTemplate} id="education_institute" label="Education" value="Sher-e-bangla medical college & hospital, Borishal" placeholder="Placeholder" className={classes.layoutOptionsTextfield}/>
+                  <TextField disabled={!printTemplate} id="reg_no" label="Register No" value="A-12345" placeholder="Placeholder" className={classes.layoutOptionsTextfield} />
+                </div>
+
+                <div className= {classes.LayoutOptionsContentCenter}>
+                  <TextField disabled={!printTemplate} id="center_text" label="Center Text" value= "1234556677890" className={classes.layoutOptionsTextfield}/>
+                </div>
+
+                <div className= {classes.LayoutOptionsContentRight}>
+                  <TextField disabled={!printTemplate} id="chamber_name" label="Chamber Name" value= "XXXX Name" className={classes.layoutOptionsTextfield}/>
+                  <TextField disabled={!printTemplate} id="chamber_address" label="Chamber Address" value= "xxxxx, yyyy ,Dhaka -1234" className={classes.layoutOptionsTextfield}/>
+                  <TextField disabled={!printTemplate} id="chamber_timing" label="Timing" value= "Monday to Friday 08:00Am to 2:00PM" className={classes.layoutOptionsTextfield}/>
+                </div>
+
+
               </div>
+              <div className= {classes.LayoutOptionsMargin}>
+                  <TextField disabled={printTemplate} id="margin_top" type="number" label="Top" value= "5" className={classes.layoutOptionsTextfield}/>
+                  <TextField disabled={printTemplate} id="margin_left" type="number" label="Left" value= "1" className={classes.layoutOptionsTextfield}/>
+                  <TextField disabled={printTemplate} id="margin_right" type="number" label="Right" value= "1" className={classes.layoutOptionsTextfield}/>
+                  <TextField disabled={printTemplate} id="margin_bottom" type="number" label="Bottom" value= "1" className={classes.layoutOptionsTextfield}/>
 
-              <div style={{ width: 600 }}>
-
-
-                <Button variant="contained" color="primary" className={classes.button} onClick={this.updateTemlate()}>Update Template</Button>
-
-              </div>
+                </div>
+              <Button variant="contained" color="primary" className={classes.button}
+              onClick={this.updateTemlate()}>Update Template
+              </Button>
             </div>
           </div>
         }
-        {value === 2 && <TabContainer>Item Three</TabContainer>}
       </div>
     )
   }
