@@ -173,7 +173,7 @@ class TreatmentTableView extends React.Component {
       openMedicineDetail: false,
       //medicine:[],
       treatmentDetails: '',
-      //MedicineList: this.props.medicineState.medicineList,
+      MedicineList: this.props.medicineState.medicineList,
       openAddTreatment:false,
       
       treatmentName:'',
@@ -455,21 +455,7 @@ class TreatmentTableView extends React.Component {
       MOnChange:true
     })
   };
-  MedSearchKeywords = (event)=>{
-    let keyword = event.target.value;
-    this.setState({MedOnchange:true, MedFlag:false})
-    if( keyword == ""){
-      this.setState({MedOnchange:false})
-    }
-    this.setState({ TempMedValue: event.target.value });
-    let filtered = this.state.MedData.filter((item)=>{
-      return item.product_name.toUpperCase().indexOf(keyword.toUpperCase()) > -1;
-    });
-    this.setState({
-      MedFiltered:filtered,
-      MedOnchange:true
-    })
-  };
+  
   StrenSearchKeywords = (event)=>{
     let keyword = event.target.value;
     this.setState({TempStrenValue:keyword});

@@ -227,7 +227,14 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
 
-},
+  },
+  addMedicineBtn:{
+    position: 'relative',
+    zIndex:'100',
+    float: 'right',
+    marginRight:'1%',
+    marginTop:'-2%'
+  },
 });
 
 class EnhancedTable extends React.Component {
@@ -238,20 +245,46 @@ class EnhancedTable extends React.Component {
     data: [],
     page: 0,
     rowsPerPage: 5,
-    NewMedicine:'',
+
+    MedOnchange:false,
+    MedData:this.props.medList,
+    MedFiltered:[],
+    MedList:[],
+    MedFlag:false,
+
+    TempMedValue:'',
     NewMedType:'',
     NewMedStrength:'',
-    MOnChange: false,
-    MedFiltered:[],
-    MedData:this.props.medList,
-    MedFlag:false,
+    
+
+    TempStrenValue:'',
+    StrenList:[],
+    //StrenOnchange:false,
+    TempTypValue:'',
+    TypeList:[],
+    //TypOnchange:false,
+    TempFreqValue:'',
+    FreqList:[],
+    //FreqOnchange:false,
+    TempRemValue:'',
+    RemList:[],
+
+    openSnackbar:false,
+    SnackbarMessage:'',
+    Medicines:[],
+    Treatment:[],
+    
+    openSnackbar:false,
+    SnackbarMessage:'',
+
     medDetails:'',
     UpdateDialog:false,
     deleteDialog:false,
     editDialog:false,
     editableTreatment:'',
     editedTreatmentName:'',
-    deletableMed:''
+    deletableMed:'',
+    DeleteTreatmentDiaglog: false
   };
 
   componentDidMount(){
@@ -266,7 +299,123 @@ class EnhancedTable extends React.Component {
       })
     }
   }
+  addMed=(item)=>{
+    //console.log(item);
+    this.setState({
+      TempMedValue:`${item.product_name}`,
+      TempStrenValue:`${item.strength}`,
+      TempTypValue:`${item.types}`,
+      MedFlag:true
+    });
+    //console.log(this.state.TempMedValue);
+  };
   
+  handleSnackbar=(msg)=>{
+    this.setState({
+      openSnackbar:true,
+      SnackbarMessage:msg
+    })
+  };
+  handleCloseSnackbar = () => {
+    this.setState({ openSnackbar: false });
+  };
+  MedicineSearchKeywords = (event)=>{
+    let keyword = event.target.value;
+    this.setState({MOnChange:true,MedFlag:false})
+    if( keyword == ""){
+      this.setState({MOnChange:false})
+    }
+    this.setState({ TempMedValue: event.target.value });
+    let filtered = this.state.MedData.filter((item)=>{
+      return item.product_name.toUpperCase().indexOf(keyword.toUpperCase()) > -1;
+    });
+    this.setState({
+      MedFiltered:filtered,
+      MOnChange:true
+    })
+  };
+  StrenSearchKeywords = (event)=>{
+    let keyword = event.target.value;
+    this.setState({TempStrenValue:keyword});
+  };
+  TypeSearchKeywords = (event)=>{
+    let keyword = event.target.value;
+    this.setState({TempTypValue:keyword});
+  };
+  FreqSearchKeywords = (event)=>{
+    let keyword = event.target.value;
+    this.setState({TempFreqValue:keyword});
+  };
+  RemarkSearchKeywords = (event)=>{
+    let keyword = event.target.value;
+    this.setState({TempRemValue:keyword});
+  };
+  handleAddNewMedicine=()=>{
+    console.log("Save Medicine");
+    
+    let Idval = this.state.data.length+1;
+    let MedVal = this.state.TempMedValue;
+    let StrenVal = this.state.TempStrenValue;
+    if(StrenVal == '')StrenVal = "N/A";
+
+    let TypVal = this.state.TempTypValue;
+    if(TypVal == '')TypVal = "N/A";
+
+    let RemVal = this.state.TempRemValue;
+    if(RemVal == '')RemVal = "N/A";
+
+    let FreqVal = this.state.TempFreqValue;
+    if(FreqVal == '')FreqVal = "N/A";
+
+    let fl = 1;
+    let loopMed = this.state.data.map((j)=>{
+      if(j.product_name.toUpperCase() === MedVal.toUpperCase() && j.strength.toUpperCase() === StrenVal.toUpperCase()){
+        fl = 0;
+      }
+    });
+
+    if(fl==1){
+      this.setState((prevState) => ({
+        Medicines: [...prevState.Medicines, {id: Idval, product_name:MedVal, type:TypVal, strength: StrenVal, frequency: FreqVal, remark: RemVal}]
+      }));
+    }
+
+    this.setState({
+      TempMedValue:'',
+      TempFreqValue:'',
+      TempTypValue:'',
+      TempRemValue:'',
+      TempStrenValue:''
+    })
+    let medicines = this.state.Medicines;
+    
+    let Treatmentdescription = this.state.treatmentDescription;
+    let NameTreatment = this.state.treatmentName;
+      
+      
+    //}
+    
+  }
+  // removeAllMedicine = i =>{
+  //   let x =  i;
+  //   console.log(x);
+  //   this.setState(state => {
+  //     const MedList = state.MedList.filter((item, j) => x !== j);
+  //     const StrenList = state.StrenList.filter((item, j) => x !== j);
+  //     const TypeList = state.TypeList.filter((item, j) => x !== j);
+  //     const FreqList = state.FreqList.filter((item, j) => x !== j);
+  //     const RemList = state.RemList.filter((item, j) => x !== j);
+  //     return {
+  //       MedList,
+  //       StrenList,
+  //       TypeList,
+  //       FreqList,
+  //       RemList,
+  //     };
+  //   });
+  //   //this.props.deleteMedicine(i);
+  // };
+
   handleRequestSort = (event, property) => {
     const orderBy = property;
     let order = 'desc';
@@ -324,31 +473,31 @@ class EnhancedTable extends React.Component {
   addMed=(item)=>{
     //console.log(item);
     this.setState({
-      NewMedicine:`${item.product_name}`,
-      NewMedType:`${item.types}`,
-      NewMedStrength:`${item.strength}`,
+      TempMedValue:`${item.product_name}`,
+      TempStrenValue:`${item.strength}`,
+      TempTypValue:`${item.types}`,
       MedFlag:true
     });
+    //console.log(this.state.TempMedValue);
   };
-  addAll=()=>{
-    // Have to call an api for saving it to database
+  // addAll=()=>{
+  //   // Have to call an api for saving it to database
 
-  }
-  MedicineSearchKeywords = (event)=>{
-    let keyword = event.target.value;
-    this.setState({MOnChange:true,MedFlag:false})
-    if( keyword == ""){
-      this.setState({MOnChange:false})
-    }
-    this.setState({ NewMedicine: event.target.value });
-    let filtered = this.state.MedData.filter((item)=>{
-      return item.product_name.toUpperCase().indexOf(keyword.toUpperCase()) > -1;
-    });
+  // }
+  
+  handleDeleteTreatmentDiaglogBox=()=>{
     this.setState({
-      MedFiltered:filtered,
-      MOnChange:true
+      DeleteTreatmentDiaglog:true
     })
   };
+  handleCloseDeleteTreatment=()=>{
+    this.setState({
+      DeleteTreatmentDiaglog:false
+    })
+  }
+  handleDeleteTreatment=()=>{
+    console.log("Treatment Delete");
+  }
   handleClickEditTreatment=(treatment)=>{
     this.setState({
       editDialog:true,
@@ -392,6 +541,7 @@ class EnhancedTable extends React.Component {
   handleClose = () => {
     this.setState({ UpdateDialog: false });
   };
+  
   render() {
     const { classes , name} = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
@@ -420,9 +570,16 @@ class EnhancedTable extends React.Component {
               <Edit/>
             </IconButton>
           </Tooltip>
+          <div className={classes.addMedicineBtn}>
+              <Tooltip title="Delete Treatment" aria-label="Add">
+                <Fab style={{background:'red'}} size="small" onClick={this.handleDeleteTreatmentDiaglogBox}>
+                  <DeleteIcon/>
+                </Fab>
+              </Tooltip>
+          </div>
         </div>
-        <div style={{marginLeft:'1.4%'}}>
-            <Grid container>
+        <div style={{padding:'1.4%'}}>
+              <Grid container>
                 {/* <Grid item xs={1}>
                   <Fab color="secondary" size="small" disabled style={{marginTop:'10px'}}>
                     
@@ -432,15 +589,15 @@ class EnhancedTable extends React.Component {
                   <TextField
                     id=""
                     label="Add New Medicine"
-                    value={this.state.NewMedicine}
+                    value={this.state.TempMedValue}
                     onChange={this.MedicineSearchKeywords}
                     margin="normal"
                     style={{fontSize:'14px',width:'85%',margin:'0px', padding:'0px'}}
                   />
-                  {!this.state.NewMedicine=="" && !this.state.MedFlag?
-                  <div style={{marginLeft:'-65px',maxHeight:'200px', width:'100%', position:'relative', overflow:'auto',padding:'0px',marginTop:'0px'}}>
+                  {!this.state.TempMedValue=="" && !this.state.MedFlag?
+                  <div style={{marginLeft:'-35px',maxHeight:'200px', width:'100%', position:'relative', overflow:'auto',padding:'0px',marginTop:'0px'}}>
                     <ul style={{marginTop:'-1px'}}>
-                      {!this.state.NewMedicine=="" && !this.state.MedFlag?Med:null}
+                      {!this.state.TempMedValue=="" && !this.state.MedFlag?Med:null}
                     </ul>
                   </div>:null
                   }
@@ -450,7 +607,7 @@ class EnhancedTable extends React.Component {
                     id="strength"
                     label="Strength"
                     className={classes.medtextField}
-                    value={this.state.NewMedStrength}
+                    value={this.state.TempStrenValue}
                     onChange={this.StrenSearchKeywords}
                     margin="normal"
                     style={{fontSize:'14px'}}
@@ -461,7 +618,7 @@ class EnhancedTable extends React.Component {
                     id="type"
                     label="Type"
                     className={classes.medtextField}
-                    value={this.state.NewMedType}
+                    value={this.state.TempTypValue}
                     onChange={this.TypeSearchKeywords}
                     margin="normal"
                     style={{fontSize:'14px'}}
@@ -490,7 +647,7 @@ class EnhancedTable extends React.Component {
                   />
                   <Tooltip title="Add Medicine">
                     <IconButton
-                      onClick={this.addAll}
+                      onClick={this.handleAddNewMedicine}
                       //disabled={!this.state.TempMedValue}
                       style={{marginTop:'-40px',marginLeft:'80%'}}
                     >
@@ -499,7 +656,7 @@ class EnhancedTable extends React.Component {
                   </Tooltip>
                 </Grid>
               </Grid>
-        </div>
+              </div>
         <div className={classes.tableWrapper}>
           <Table className={classes.table} aria-labelledby="tableTitle">
             <EnhancedTableHead
@@ -592,6 +749,26 @@ class EnhancedTable extends React.Component {
                 Delete
               </Button>
               <Button onClick={this.handleCloseDelete} color="primary">
+                Cancel
+              </Button>
+              
+            </DialogActions>
+        </Dialog>
+        <Dialog
+            open={this.state.DeleteTreatmentDiaglog}
+            onClose={this.handleCloseDeleteTreatment}
+          >
+          <DialogTitle>Are you Sure you want to delete?</DialogTitle>
+            <DialogContent>
+              
+                <Typography>Treatment Name: {this.props.treatmentDetails.name}</Typography>
+              
+            </DialogContent>
+          <DialogActions>
+              <Button onClick={this.handleDeleteTreatment} color="secondary" variant="contained"> 
+                Delete
+              </Button>
+              <Button onClick={this.handleCloseDeleteTreatment} color="primary">
                 Cancel
               </Button>
               
