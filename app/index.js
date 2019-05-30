@@ -8,7 +8,7 @@ import Provider from "react-redux/es/components/Provider";
 const { ipcRenderer } = require('electron');
 import systemPrinters from './features/systemEnv';
 const store = configureStore();
-
+import registerServiceWorker from './registerServiceWorker';
 store.dispatch(systemPrinters(ipcRenderer.sendSync('fetch-system-printers', 'printers')));
 
 render(
@@ -19,6 +19,7 @@ render(
     </Provider>,
   document.getElementById('root')
 );
+registerServiceWorker();
 
 if (module.hot) {
   module.hot.accept('./containers/RootContainer', () => {

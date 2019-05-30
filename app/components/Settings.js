@@ -19,6 +19,7 @@ import {IconSettingsPrinter , IconSettingsDocument} from '../assets';
 import Switch from '@material-ui/core/Switch';
 import PDFViewer from 'mgr-pdf-viewer-react';
 import TextField from '@material-ui/core/TextField';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = theme => ({
   root: {
@@ -103,6 +104,15 @@ TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
+const PreviewPDF = (props) => {
+  return (
+    <div className= {props.classes.settingsTemplateLayoutPreview}>
+      <PDFViewer document={{"binary": props.document  }} scale={.9} hideNavbar={true} loader={<CircularProgress />}/>
+    </div>
+  );
+};
+
+
 class Settings extends React.Component{
   constructor(props) {
     super(props);
@@ -112,31 +122,124 @@ class Settings extends React.Component{
       defaultPrinter: '',
       backgroundPrint: true,
       expanded: null,
-      document: ipcRenderer.sendSync("generate-pdf"),
-      printTemplate: false
+      document: '',
+      defaultTemplate: true,
+      dr_name:'',
+      dr_education:'',
+      dr_specialist:'',
+      education_institute:'',
+      reg_no:'',
+      center_text:'',
+      chamber_name:'',
+      chamber_address:'',
+      chamber_timing:'',
+      margin_top:0,
+      margin_bottom:0,
+      margin_left:0,
+      margin_right:0,
+      docUpdated: false
     };
   }
 
   componentDidMount(){
 
+    const {firstname , lastname} = this.props.usermanagementState.profile;
+    const username = firstname +` ` +lastname;
+
     this.setState( {
       printers : this.props.systemEnvState.printers,
       defaultPrinter: this.props.settingsState.defaultPrinter,
       backgroundPrint: this.props.settingsState.backgroundPrint,
+      document: this.props.settingsState.document,
+      defaultTemplate: this.props.settingsState.defaultTemplate,
+      dr_name: username,
+      dr_education:this.props.settingsState.dr_education,
+      dr_specialist:this.props.settingsState.dr_specialist,
+      education_institute:this.props.settingsState.education_institute,
+      reg_no:this.props.settingsState.reg_no,
+      center_text:this.props.settingsState.center_text,
+      chamber_name:this.props.settingsState.chamber_name,
+      chamber_address:this.props.settingsState.chamber_address,
+      chamber_timing:this.props.settingsState.chamber_timing,
+      margin_top:this.props.settingsState.margin_top,
+      margin_bottom:this.props.settingsState.margin_bottom,
+      margin_left:this.props.settingsState.margin_left,
+      margin_right:this.props.settingsState.margin_right
     });
 
+    const { dr_education, dr_specialist, education_institute, reg_no,
+      center_text, chamber_name, chamber_address, chamber_timing, margin_top,
+      margin_bottom, margin_left, margin_right, defaultTemplate} = this.props.settingsState;
+
+    const templateData = {
+      header_center_text: {
+        text1:center_text
+      },
+      header_left_text: {
+        dr_name: username,
+        dr_education: dr_education,
+        dr_specialist: dr_specialist,
+        education_institute: education_institute,
+        dr_reg: reg_no
+      },
+      header_right_text:{
+        chamber_name : chamber_name,
+        chamber_address: chamber_address,
+        chamber_timing: chamber_timing
+      },
+      header_footer_text:'',
+      defaultTemplate: defaultTemplate,
+      margin:{
+        top: margin_top,
+        bottom: margin_bottom,
+        left: margin_left,
+        right: margin_right
+      }
+    };
+    ipcRenderer.send("updateTemplateRequest", templateData);
+    this.props.defaultDocument(ipcRenderer.sendSync("generate-pdf"));
   }
 
   componentDidUpdate(prevProps){
-
     if (this.props.settingsState !== prevProps.settingsState) {
-      console.log("updating settings info");
+      const {firstname , lastname} = this.props.usermanagementState.profile;
+      const username = firstname +` ` +lastname;
       this.setState({
+        printers : this.props.systemEnvState.printers,
         defaultPrinter: this.props.settingsState.defaultPrinter,
-        backgroundPrint: this.props.settingsState.backgroundPrint
+        backgroundPrint: this.props.settingsState.backgroundPrint,
+        document: this.props.settingsState.document,
+        defaultTemplate: this.props.settingsState.defaultTemplate,
+        dr_name: username,
+        dr_education:this.props.settingsState.dr_education,
+        dr_specialist:this.props.settingsState.dr_specialist,
+        education_institute:this.props.settingsState.education_institute,
+        reg_no:this.props.settingsState.reg_no,
+        center_text:this.props.settingsState.center_text,
+        chamber_name:this.props.settingsState.chamber_name,
+        chamber_address:this.props.settingsState.chamber_address,
+        chamber_timing:this.props.settingsState.chamber_timing,
+        margin_top:this.props.settingsState.margin_top,
+        margin_bottom:this.props.settingsState.margin_bottom,
+        margin_left:this.props.settingsState.margin_left,
+        margin_right:this.props.settingsState.margin_right
       })
     }
   }
+
+  handleSettingChange=(event)=>{
+    console.log("handleSettingChange");
+    let value = event.target.value;
+    let id = event.target.id;
+    this.setState({ [id]: value });
+    const data = {
+      id: id,
+      value:value
+    };
+    this.props.changeTemplateSettings(data);
+  };
+
+
   handlebackgroundPrintChange = name => event => {
     const settings ={
       backgroundPrint: event.target.checked,
@@ -146,8 +249,8 @@ class Settings extends React.Component{
     //this.setState({ [name]: event.target.checked });
   };
   handleprintTemplateChange = name => event =>{
-    console.log(this.state);
-    this.setState({ printTemplate: event.target.checked});
+    this.setState({ defaultTemplate: event.target.checked});
+    this.props.defaultTemplate(event.target.checked);
   };
 
   handleTabChange = (event, value) => {
@@ -186,38 +289,102 @@ class Settings extends React.Component{
     console.log("Test print request", printerObj);
     ipcRenderer.send("printPDF", printerObj);
   };
+
+
   updateTemlate = () => (event)=>{
     event.preventDefault();
-    console.log("PDF GENERATE REQUEST");
-    console.log();
+    console.log("UPDATE TEMPLATE REQUEST, before");
+    console.log(this.state);
+    const { dr_name, dr_education, dr_specialist, education_institute, reg_no,
+      center_text, chamber_name, chamber_address, chamber_timing, margin_top,
+      margin_bottom, margin_left, margin_right, defaultTemplate} = this.state;
+
+    const templateData = {
+      header_center_text: {
+       text1:center_text
+      },
+      header_left_text: {
+       dr_name: dr_name,
+       dr_education: dr_education,
+       dr_specialist: dr_specialist,
+       education_institute: education_institute,
+       dr_reg: reg_no
+      },
+      header_right_text:{
+       chamber_name : chamber_name,
+       chamber_address: chamber_address,
+       chamber_timing: chamber_timing
+      },
+      header_footer_text:'',
+      defaultTemplate: defaultTemplate,
+      margin:{
+        top: margin_top,
+        bottom: margin_bottom,
+        left: margin_left,
+        right: margin_right
+      }
+    };
+    ipcRenderer.send("updateTemplateRequest", templateData);
+
+    this.props.defaultDocument(ipcRenderer.sendSync("generate-pdf"));
+
+    console.log("After");
+    console.log(this.state);
+
+    const settings ={
+      defaultTemplate: this.state.defaultTemplate,
+      dr_name:this.state.dr_name,
+      dr_education:this.state.dr_education,
+      dr_specialist:this.state.dr_specialist,
+      education_institute:this.state.education_institute,
+      reg_no:this.state.reg_no,
+      center_text:this.state.center_text,
+      chamber_name:this.state.chamber_name,
+      chamber_address:this.state.chamber_address,
+      chamber_timing:this.state.chamber_timing,
+      margin_top:this.state.margin_top,
+      margin_bottom:this.state.margin_bottom,
+      margin_left:this.state.margin_left,
+      margin_right:this.state.margin_right
+    };
+
+    this.props.updateTemplateSettings(settings);
   };
-  onLoadSuccess = ({ numPages }) => {
-    this.setState({ numPages });
-  };
-  onRenderSuccess = (page) => {
-    console.log(page.originalHeight);
-  };
+
 
   render(){
     const { classes } = this.props;
-    const { value , printers, document } = this.state;
     console.log("Inside Settings Component");
-    console.log(this.state);
-    console.log(this.props);
-  // console.log("installed printers:\n"+util.inspect(printer.getPrinters(), {colors:true, depth:10}));
-    const { expanded, printTemplate } = this.state;
+    console.log("State :" , this.state);
 
-    return(
+    const {expanded, value, docUpdated, defaultTemplate, dr_name, dr_education, dr_specialist, education_institute, reg_no,
+      center_text, chamber_name, chamber_address, chamber_timing, margin_top,
+      margin_bottom, margin_left, margin_right, document} = this.state;
+
+
+      return(
       <div className={classes.root}>
         <AppBar position="static" color="default">
           <Tabs value={value} onChange={this.handleTabChange} variant="scrollable" scrollButtons="on" indicatorColor="primary" textColor="primary">
-            <Tab label="Printers" icon= {<IconSettingsPrinter />} />
-            <Tab label="Print Settings" icon={<FavoriteIcon />} />
-            <Tab label="Template Settings" icon={<PersonPinIcon />} />
+            <Tab label="Printer" icon= {<IconSettingsPrinter />} />
+            <Tab label="Template" icon={<FavoriteIcon />} />
           </Tabs>
         </AppBar>
 
-        {value === 0 &&  <ul className={classes.printerList}> {this.state.printers.map((p, key) =>
+        {value === 0 &&
+        <div>
+          <span>
+            Background Print
+              <Switch
+                checked={this.state.backgroundPrint}
+                onChange={this.handlebackgroundPrintChange('backgroundPrint')}
+                value="backgroundPrint"
+              />
+            </span>
+
+        <ul className={classes.printerList}>
+
+          {this.state.printers.map((p, key) =>
           <li className={classes.printerListElm} key={key}>
 
             <PrinterElements printer={p} classes={classes}/>
@@ -239,71 +406,57 @@ class Settings extends React.Component{
 
           </li>
         )}
-        </ul>
+        </ul> </div>
         }
 
         {value === 1 &&
-          <div>
-            <span>
-            Background Print
-              <Switch
-                checked={this.state.backgroundPrint}
-                onChange={this.handlebackgroundPrintChange('backgroundPrint')}
-                value="backgroundPrint"
-              />
-            </span>
-            </div>
-        }
-        {value === 2 &&
-          <div className= {classes.settingsTemplateLayoutRoot}>
+        <div className= {classes.settingsTemplateLayoutRoot}>
 
-            <div className= {classes.settingsTemplateLayoutPreview}>
-              <PDFViewer document={{"binary": document  }} scale={.9} hideNavbar={true}/>
-            </div>
+          <PreviewPDF document={document} classes={classes}  />
 
-            <div className= {classes.settingsTemplateLayoutOptions}>
+          <div className= {classes.settingsTemplateLayoutOptions}>
 
             <span>
             Use default Template
               <Switch
-                checked={printTemplate}
-                onChange={this.handleprintTemplateChange('printTemplate')}
-                value="printTemplate"
+                checked={this.state.defaultTemplate}
+                onChange={this.handleprintTemplateChange('defaultTemplate')}
+                value="defaultTemplate"
               />
             </span>
-              <div className= {classes.LayoutOptionsContent}>
-                <div className= {classes.LayoutOptionsContentLeft}>
-                  <TextField disabled={!printTemplate} id="dr_name" label="Dr Name" value= "DR. Ziaour Rahman" className={classes.layoutOptionsTextfield}/>
-                  <TextField disabled={!printTemplate} id="dr_education" label="Education" value="M.B.B.S D.EU" placeholder="Placeholder" className={classes.layoutOptionsTextfield} />
-                  <TextField disabled={!printTemplate} id="dr_specialist" label="Specialist" value="Medical Officer (Ortho Surgery)" placeholder="Placeholder" className={classes.layoutOptionsTextfield}/>
-                  <TextField disabled={!printTemplate} id="education_institute" label="Education" value="Sher-e-bangla medical college & hospital, Borishal" placeholder="Placeholder" className={classes.layoutOptionsTextfield}/>
-                  <TextField disabled={!printTemplate} id="reg_no" label="Register No" value="A-12345" placeholder="Placeholder" className={classes.layoutOptionsTextfield} />
-                </div>
-
-                <div className= {classes.LayoutOptionsContentCenter}>
-                  <TextField disabled={!printTemplate} id="center_text" label="Center Text" value= "1234556677890" className={classes.layoutOptionsTextfield}/>
-                </div>
-
-                <div className= {classes.LayoutOptionsContentRight}>
-                  <TextField disabled={!printTemplate} id="chamber_name" label="Chamber Name" value= "XXXX Name" className={classes.layoutOptionsTextfield}/>
-                  <TextField disabled={!printTemplate} id="chamber_address" label="Chamber Address" value= "xxxxx, yyyy ,Dhaka -1234" className={classes.layoutOptionsTextfield}/>
-                  <TextField disabled={!printTemplate} id="chamber_timing" label="Timing" value= "Monday to Friday 08:00Am to 2:00PM" className={classes.layoutOptionsTextfield}/>
-                </div>
-
-
+            <div className= {classes.LayoutOptionsContent}>
+              <div className= {classes.LayoutOptionsContentLeft}>
+                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="dr_name" label="Dr Name" value={dr_name} className={classes.layoutOptionsTextfield}/>
+                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="dr_education" label="Education" value={dr_education} placeholder="Placeholder" className={classes.layoutOptionsTextfield} />
+                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="dr_specialist" label="Specialist" value={dr_specialist} placeholder="Placeholder" className={classes.layoutOptionsTextfield}/>
+                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="education_institute" label="Education" value={education_institute} placeholder="Placeholder" className={classes.layoutOptionsTextfield}/>
+                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="reg_no" label="Register No" value={reg_no} placeholder="Placeholder" className={classes.layoutOptionsTextfield} />
               </div>
-              <div className= {classes.LayoutOptionsMargin}>
-                  <TextField disabled={printTemplate} id="margin_top" type="number" label="Top" value= "5" className={classes.layoutOptionsTextfield}/>
-                  <TextField disabled={printTemplate} id="margin_left" type="number" label="Left" value= "1" className={classes.layoutOptionsTextfield}/>
-                  <TextField disabled={printTemplate} id="margin_right" type="number" label="Right" value= "1" className={classes.layoutOptionsTextfield}/>
-                  <TextField disabled={printTemplate} id="margin_bottom" type="number" label="Bottom" value= "1" className={classes.layoutOptionsTextfield}/>
 
-                </div>
-              <Button variant="contained" color="primary" className={classes.button}
-              onClick={this.updateTemlate()}>Update Template
-              </Button>
+              <div className= {classes.LayoutOptionsContentCenter}>
+                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="center_text" label="Center Text" value={center_text} className={classes.layoutOptionsTextfield}/>
+              </div>
+
+              <div className= {classes.LayoutOptionsContentRight}>
+                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="chamber_name" label="Chamber Name" value={chamber_name} className={classes.layoutOptionsTextfield}/>
+                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="chamber_address" label="Chamber Address" value={chamber_address} className={classes.layoutOptionsTextfield}/>
+                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="chamber_timing" label="Timing" value={chamber_timing} className={classes.layoutOptionsTextfield}/>
+              </div>
+
+
             </div>
+            <div className= {classes.LayoutOptionsMargin}>
+              <TextField disabled={defaultTemplate} onChange={this.handleSettingChange} id="margin_top" type="number" label="Top" value= {margin_top} className={classes.layoutOptionsTextfield}/>
+              <TextField disabled={defaultTemplate} onChange={this.handleSettingChange} id="margin_bottom" type="number" label="Bottom" value= {margin_bottom} className={classes.layoutOptionsTextfield}/>
+              <TextField disabled={defaultTemplate} onChange={this.handleSettingChange} id="margin_left" type="number" label="Left" value= {margin_left} className={classes.layoutOptionsTextfield}/>
+              <TextField disabled={defaultTemplate} onChange={this.handleSettingChange} id="margin_right" type="number" label="Right" value= {margin_right} className={classes.layoutOptionsTextfield}/>
+
+            </div>
+            <Button variant="contained" color="primary" className={classes.button}
+                    onClick={this.updateTemlate()}>Update Template
+            </Button>
           </div>
+        </div>
         }
       </div>
     )

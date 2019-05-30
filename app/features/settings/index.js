@@ -1,3 +1,1 @@
-import {defaultPrinter , backgroundPrint, saveSettings} from './actions';
-
-export {defaultPrinter , backgroundPrint, saveSettings};
+export {defaultPrinter , backgroundPrint, saveSettings, defaultDocument, updateTemplateSettings, changeTemplateSettings, defaultTemplate} from './actions';

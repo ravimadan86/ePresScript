@@ -12,7 +12,6 @@
  */
 import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
-import {pdfjs} from "react-pdf";
 const {ipcMain} = require('electron');
 const fs = require('fs');
 let workerWindow=null;
@@ -43,7 +42,6 @@ let workerWindow=null;
 
 let mainWindow = null;
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -168,3 +166,7 @@ ipcMain.on('generate-pdf', (event, arg) => {
   });
 });
 
+ipcMain.on("updateTemplateRequest", (event: any, content: any) => {
+  console.log("updateTemplate", content);
+  workerWindow.webContents.send("updateTemplate", content);
+});
