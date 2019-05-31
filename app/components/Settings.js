@@ -60,14 +60,16 @@ const styles = theme => ({
     marginLeft: theme.spacing.unit,
   },
   settingsTemplateLayoutRoot:{
+    marginTop:"8px",
     width: "auto",
     display: "flex",
-    margin: "0px"
   },
   settingsTemplateLayoutPreview:{
-    width:"auto%"
+    width:"auto"
   },
   settingsTemplateLayoutOptions:{
+    padding:'2%',
+    marginTop:'-20px',
     width:"100%",
     display: "flex",
     flexDirection: "column"
@@ -291,8 +293,8 @@ class Settings extends React.Component{
   };
 
 
-  updateTemlate = () => (event)=>{
-    event.preventDefault();
+  updateTemplate = (event)=>{
+    //event.preventDefault();
     console.log("UPDATE TEMPLATE REQUEST, before");
     console.log(this.state);
     const { dr_name, dr_education, dr_specialist, education_institute, reg_no,
@@ -372,8 +374,8 @@ class Settings extends React.Component{
         </AppBar>
 
         {value === 0 &&
-        <div>
-          <span>
+        <div style={{ marginTop:'20px'}}>
+          <span style={{padding:'4.5%'}}>
             Background Print
               <Switch
                 checked={this.state.backgroundPrint}
@@ -412,11 +414,11 @@ class Settings extends React.Component{
         {value === 1 &&
         <div className= {classes.settingsTemplateLayoutRoot}>
 
-          <PreviewPDF document={document} classes={classes}  />
+          <PreviewPDF document={document} classes={classes} />
 
           <div className= {classes.settingsTemplateLayoutOptions}>
 
-            <span>
+            <span style={{marginLeft:'1.5%'}}>
             Use default Template
               <Switch
                 checked={this.state.defaultTemplate}
@@ -453,7 +455,7 @@ class Settings extends React.Component{
 
             </div>
             <Button variant="contained" color="primary" className={classes.button}
-                    onClick={this.updateTemlate()}>Update Template
+                    onClick={this.updateTemplate}>Update Template
             </Button>
           </div>
         </div>
