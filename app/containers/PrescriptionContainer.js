@@ -14,7 +14,8 @@ const mapStateToProps = state => ({
   medicineState: state.medicineState,
   securityState: state.securityState,
   treatmentState: state.treatmentState,
-  prescriptionState : state.prescriptionState
+  prescriptionState : state.prescriptionState,
+  settingsState: state.settingsState
 });
 
 const mapDispatchToProps = {
@@ -40,7 +41,7 @@ class PrescriptionContainer extends Component {
       setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests ,
       deleteCC, updateCC , deleteOE , updateOE , updateTest, deleteTest, updateMedicineFequency, updateMedicineName,
       updateMedicineRemark, updateMedicineStrength, updateMedicineType, deleteMedicine, deleteDiagnosis, setDiagnosis,
-      updateDiagnosis
+      updateDiagnosis, settingsState
     } = this.props;
     return (
       <PrescriptionWritting
@@ -48,6 +49,7 @@ class PrescriptionContainer extends Component {
         treatmentState={treatmentState}
         medicineState={medicineState}
         prescriptionState={prescriptionState}
+        settingsState={settingsState}
 
         setDiagnosis={setDiagnosis}
         updateDiagnosis={updateDiagnosis}

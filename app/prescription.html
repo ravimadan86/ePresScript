@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<style>
+html, body {
+height: 100%;
+margin: 0px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-rows: max-content max-content auto max-content ;
+  width: auto;
+  padding: 0px;
+}
+
+.header {
+  grid-area: 1 / 1 / 1 / 7;
+  overflow: hidden;
+  /*padding: 50px 50px 15px 50px;  !*set default margin to top , left and right -> 0.5"*!*/
+}
+.header_root{
+  display: flex;
+  overflow: hidden;
+  flex-grow: 1;
+  margin: 0px;
+  justify-content: space-between;
+}
+.header_root > div{
+  width: 33.33%;
+}
+.header_left_content > p{
+    margin: 0px;
+    font-size: 16px
+}
+#dr_name{
+  font-size: 24px;
+  font-weight: bold;
+}
+#dr_specialist{
+  font-weight: bold;
+}
+.header_center_content >p {
+  margin: 0px;
+  font-size: 16px
+}
+.header_center_content {
+  justify-content: center;
+  margin: 0;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+}
+
+.header_right_content > p{
+  margin: 0px;
+  font-size: 16px
+}
+#chamber_name{
+  font-size: 20px;
+  font-weight: bold;
+}
+.content_patient {
+  grid-area: 2 / 1 / 2 / 7;
+  overflow: hidden;
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+.content_patient_root > p{
+  font-size: 16px;  /*standard font size */
+  text-align: center;
+  margin: 0px;
+}
+.content_patient_root{
+  display: flex;
+  overflow: hidden;
+  margin: 0px;
+  flex-grow: 1;
+  justify-content: space-between;
+  padding: 5px 50px 5px 50px;
+}
+/*Content Main */
+.content_main {
+  grid-area: 3 / 1 / 3 / 7;
+  overflow: hidden;
+  display: flex;
+  flex-grow: 1;
+  padding: 0 50px 0 50px;
+}
+
+/*Content Main Left*/
+.content_main_left{
+  width: 30%;
+  border-right: 1px solid;
+}
+.content_main_right{
+  width: 70%;
+}
+.content_main_left_root_cc > p{
+  font-size: 16px;
+  padding: 20px 20px 0 0;
+  margin: 0px;
+}
+#cc_data > p{
+  padding: 0px;
+  margin: 0px;
+}
+.content_main_left_root_oe > p{
+  font-size: 16px;
+  padding: 20px 20px 0 0;
+  margin: 0px;
+}
+#oe_data >p {
+  padding: 0px;
+  margin: 0px;
+}
+.content_main_left_root_tests > p{
+  font-size: 16px;
+  padding: 20px 20px 0 0;
+  margin: 0px;
+}
+#test_data >p {
+  padding: 0px;
+  margin: 0px;
+}
+#treatment_data >p {
+  padding: 0px;
+  margin: 0px;
+}
+.content_main_left_root_treatment > p{
+  font-size: 16px;
+  padding: 20px 20px 0 0;
+  margin: 0px;
+}
+.content_main_left_root_advice > p{
+  font-size: 16px;
+  padding: 20px 20px 0 0;
+  margin: 0px;
+}
+
+/*End Content Main Left*/
+
+/*Content Main Right*/
+
+.content_main_right {
+  grid-area: 3 / 2 / 3 / 7;
+}
+.content_main_right_rx{
+  padding: 5px 0px 0px 5px;
+}
+
+#med_data > div{
+  margin: 0px;
+  padding: 10px 0px 10px 40px;
+}
+#med_f{
+  display: flex;
+}
+#med_f > p{
+  margin: 0px;
+}
+#med_type{
+  text-transform: uppercase;
+  padding: 0 10px 0px 0px;
+}
+#med_strength{
+  padding: 0px 0px 0px 5px;
+  text-transform: uppercase;
+}
+#med_l{
+  display: flex;
+  padding: 5px 0 0 0;
+}
+#med_l > p{
+  margin: 0px;
+}
+#med_frequency{
+  padding: 0px 50px 0 0;
+}
+/*End Content Main Right*/
+#footer {
+  grid-area: 4 / 1 / 4 / 7;
+}
+
+</style>
+</head>
+
+<body>
+  <div class="grid-container">
+    <div class="header">
+      <div class="header_root">
+
+        <div class="header_left_content">
+          <img id="header_left_content_img" src="" alt="">
+          <p id="dr_name"> asd</p>
+          <p id="dr_education">asd </p>
+          <p id="dr_specialist">asd </p>
+          <p id="education_institute">asd </p>
+          <p id="dr_reg">ad </p>
+        </div>
+
+        <div class="header_center_content">
+          <img id="header_center_content_img" src="" alt="">
+          <p>For Appointment</p>
+          <p id ="header_center_content_text"></p>
+        </div>
+
+        <div class="header_right_content">
+          <img id="header_right_content_img" src="" alt="">
+          <p id="chamber_name">Test</p>
+          <p id="chamber_address">Test</p>
+          <p id="chamber_timing">Test</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="content_patient">
+      <div class="content_patient_root">
+        <p id="patient_name"> Akibur Rahman</p>
+        <p id="patient_age"> 23yrs</p>
+        <p id="patient_sex"> Male</p>
+        <p id="patient_mobile">Mobile: 012345678901</p>
+        <p id="patient_id"> 123456789</p>
+        <p id="prescription_date">Date 01/01/2019</p>
+      </div>
+    </div>
+
+    <div class="content_main">
+      <div class="content_main_left">
+        <div class="content_main_left_root_cc">
+          <p>CC</p>
+          <p id="cc_data"> </p>
+        </div>
+        <div class="content_main_left_root_oe">
+          <p>OE</p>
+          <p id="oe_data"> </p>
+        </div>
+        <div class="content_main_left_root_tests">
+          <p>Tests</p>
+          <p id="test_data"> </p>
+        </div>
+        <div class="content_main_left_root_treatment">
+          <p>Treatments</p>
+          <p id="treatment_data"> </p>
+        </div>
+        <div class="content_main_left_root_advice">
+          <p>Advice</p>
+          <p id="advice_data"> </p>
+        </div>
+      </div>
+
+      <div class="content_main_right">
+        <div class="content_main_right_rx">
+          <img id="content_main_right_rx_img" src="" alt="" style="width:30px;">
+        </div>
+        <div class=content_main_right_medicines"">
+          <div id="med_data"></div>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="content_main_right">6</div> -->
+  <div id="footer">7</div>
+</div>
+
+<script>
+
+let templateData="";
+let printOption="";
+const ipcRenderer = require("electron").ipcRenderer;
+
+ipcRenderer.on("updateTemplate", (event, data) => {
+
+  console.log("test");
+  console.log(event);
+  console.log(data);
+  document.getElementById("dr_name").innerHTML = data.header_left_text.dr_name;
+  document.getElementById("dr_education").innerHTML = data.header_left_text.dr_education;
+  document.getElementById("dr_specialist").innerHTML = data.header_left_text.dr_specialist;
+  document.getElementById("education_institute").innerHTML = data.header_left_text.education_institute;
+  document.getElementById("dr_reg").innerHTML = data.header_left_text.dr_reg;
+  document.getElementById("header_center_content_text").innerHTML = data.header_center_text.text1;
+
+
+  document.getElementById("chamber_name").innerHTML = data.header_right_text.chamber_name;
+  document.getElementById("chamber_address").innerHTML = data.header_right_text.chamber_address;
+  document.getElementById("chamber_timing").innerHTML = data.header_right_text.chamber_timing;
+
+});
+ipcRenderer.on("printPDF", (event, data) => {
+  const {content , options} = data;
+  templateData = content;
+  printOption = options;
+
+  /*
+  User can decide if he/sehe wants to print the template or use just margins to adjust printing
+  */
+  if (templateData !== ""){
+    if (!templateData.layout_print_setting.print_obj) {
+      console.log("layout_print_setting");
+      let header_margin= 5 * 37; //default 5cm
+      let content_patient_margin= 1 * 37; //default 1 cm
+      let content_margin= 23 * 37; //default 23.5cm
+      let footer_margin= 1 * 37; //default 1cm
+
+      console.log( header_margin + content_patient_margin +content_margin +footer_margin);
+
+      if (templateData.layout_print_setting.header > 0)
+        header_margin = templateData.layout_print_setting.header * 37; // convert to pixels
+
+      if (templateData.layout_print_setting.content > 0)
+        content_margin = templateData.layout_print_setting.content * 37; // convert to pixels
+
+      if (templateData.layout_print_setting.footer > 0)
+        footer_margin = templateData.layout_print_setting.footer * 37; // convert to pixels
+
+      if (templateData.layout_print_setting.patient_detail > 0)
+        content_patient_margin = templateData.layout_print_setting.patient_detail * 37; // convert to pixels
+
+      let margin_final;
+      if (!templateData.layout_print_setting.footer_enable) {
+        margin_final = `grid-template-rows: ${header_margin}px ${content_patient_margin}px ${content_margin}px max-content `;
+      }else {
+        margin_final = `grid-template-rows: ${header_margin}px ${content_patient_margin}px ${content_margin}px ${footer_margin}px `;
+      }
+
+      console.log(margin_final);
+
+      const gridContainer = document.querySelector('.grid-container');
+      gridContainer.setAttribute('style', margin_final);
+
+      const headerLeft = document.querySelector('.header_root');
+      headerLeft.setAttribute('style', 'display:none');
+
+      const headerRight = document.querySelector('.header_center_content');
+      headerRight.setAttribute('style', 'display:none');
+
+// const headerCenter = document.querySelector('.header_right_content');
+// headerCenter.setAttribute('style', 'display:none');
+
+    } /*End of layout_print_setting   */
+
+//Check if anything needs to be disabled
+    if (!templateData.layout_print_setting.footer_enable) {
+      let footer = document.getElementById("footer");
+      if (footer != null) {
+        footer.parentNode.removeChild(footer);
+      }
+    }
+
+
+//Set Header
+   let header_center_content_img =  document.getElementById('header_center_content_img');
+    if (header_center_content_img !== null )
+      header_center_content_img.setAttribute('src', templateData.header_center_img);
+
+    if (templateData.header_left_text != '') {
+
+//delete the img element
+      let header_left_content_img = document.getElementById("header_left_content_img");
+      if (header_left_content_img != null) {
+        header_left_content_img.parentNode.removeChild(header_left_content_img);
+      }
+      console.log("Header data");
+      document.getElementById("dr_name").innerHTML = templateData.header_left_text.dr_name;
+      document.getElementById("dr_education").innerHTML = templateData.header_left_text.dr_education;
+      document.getElementById("dr_specialist").innerHTML = templateData.header_left_text.dr_specialist;
+      document.getElementById("education_institute").innerHTML = templateData.header_left_text.education_institute;
+      document.getElementById("dr_reg").innerHTML = templateData.header_left_text.dr_reg;
+    }
+
+    if (templateData.header_center_text != '') {
+      //delete the img element
+      let header_center_content_img = document.getElementById("header_center_content_img");
+      if (header_center_content_img != null) {
+        header_center_content_img.parentNode.removeChild(header_center_content_img);
+      }
+      document.getElementById("header_center_content_text").innerHTML = templateData.header_center_text.text1;
+    }
+
+    if (templateData.header_right_text != '') {
+      //delete the img element
+      let header_right_content_img = document.getElementById("header_right_content_img");
+      if (header_right_content_img != null) {
+        header_right_content_img.parentNode.removeChild(header_right_content_img);
+      }
+      document.getElementById("chamber_name").innerHTML = templateData.header_right_text.chamber_name;
+      document.getElementById("chamber_address").innerHTML = templateData.header_right_text.chamber_address;
+      document.getElementById("chamber_timing").innerHTML = templateData.header_right_text.chamber_timing;
+    }
+
+//Set Contents
+    console.log(templateData.cc);
+    let cc_data="";
+    let oe_data="";
+    let test_data="";
+    let treatment_data="";
+    templateData.cc.forEach(function (arrayItem) {
+      cc_data += `<p> ${arrayItem.name} </p>`
+    });
+    templateData.oe.forEach(function (arrayItem) {
+      oe_data += `<p> ${arrayItem.name} </p>`
+    });
+    templateData.tests.forEach(function (arrayItem) {
+      test_data += `<p> ${arrayItem.name} </p>`
+    });
+    templateData.treatment.forEach(function (arrayItem) {
+      treatment_data += `<p> ${arrayItem.name} </p>`
+    });
+    document.getElementById("cc_data").innerHTML = cc_data;
+    document.getElementById("oe_data").innerHTML = oe_data;
+    document.getElementById("test_data").innerHTML = test_data;
+    document.getElementById("treatment_data").innerHTML = treatment_data;
+    document.getElementById("advice_data").innerHTML = templateData.advice;
+
+//Set all Patient Infos
+    const patientName = `Patient Name : ${templateData.patient.name}`;
+    document.getElementById("patient_name").innerHTML = templateData.patient.name;
+    const patientAge = `Age : ${templateData.patient.age}`;
+    document.getElementById("patient_age").innerHTML = templateData.patient.age;
+    const patientSex = `Sex : ${templateData.patient.sex}`;
+    document.getElementById("patient_sex").innerHTML = templateData.patient.sex;
+    const patientId = `PID : ${templateData.patient.id}`;
+    document.getElementById("patient_id").innerHTML = templateData.patient.id;
+    document.getElementById("prescription_date").innerHTML = templateData.patient.date;
+
+//set Rx image
+
+    document.getElementById('content_main_right_rx_img')
+      .setAttribute(
+        'src', templateData.content_main_right_rx_img);
+
+//Set Medicines prescribed
+    let med_data="";
+    templateData.medicines.forEach(function (arrayItem) {
+      med_data += `<div class="medicine"> <span id="med_f"> <p id="med_type">${arrayItem.type}</p><p id="med_name">${arrayItem.product_name}</p><p id="med_strength">${arrayItem.strength}</p></span><span id="med_l"><p id="med_frequency"> ${arrayItem.frequency}</p><p id="med_remark">${arrayItem.remark} </p></span></div>`
+    });
+    document.getElementById("med_data").innerHTML = med_data;
+  }
+
+
+  ipcRenderer.send("readyToPrintPDF" , printOption);
+});
+
+
+ </script>
+</body>
+</html>

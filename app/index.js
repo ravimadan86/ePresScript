@@ -20,6 +20,7 @@ render(
   document.getElementById('root')
 );
 
+
 if (module.hot) {
   module.hot.accept('./containers/RootContainer', () => {
     // eslint-disable-next-line global-require
