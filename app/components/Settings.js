@@ -191,11 +191,15 @@ class Settings extends React.Component{
       },
       header_footer_text:'',
       defaultTemplate: defaultTemplate,
-      margin:{
+      margins:{
         top: margin_top,
         bottom: margin_bottom,
         left: margin_left,
         right: margin_right
+      },
+      userTemplateSettings:{
+        patientDetail: true,
+        leftSideBar: true
       }
     };
     ipcRenderer.send("updateTemplateRequest", templateData);
@@ -319,11 +323,15 @@ class Settings extends React.Component{
       },
       header_footer_text:'',
       defaultTemplate: defaultTemplate,
-      margin:{
+      margins:{
         top: margin_top,
         bottom: margin_bottom,
         left: margin_left,
         right: margin_right
+      },
+      userTemplateSettings:{
+        patientDetail: true,
+        leftSideBar: true
       }
     };
     ipcRenderer.send("updateTemplateRequest", templateData);
