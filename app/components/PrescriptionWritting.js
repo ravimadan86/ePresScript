@@ -101,19 +101,18 @@ const styles = theme => ({
     padding:'0px'
   },
   leftGrid:{
-    padding: '2%',
+    //padding:'0% 1%',
     paddingTop:'0px',
     borderRight:'1px solid #D1D2D7',
     display:'table'
   },
  centerGrid:{
-    padding: '2%',
+    //padding:'0% 1%',
     paddingTop:'0px',
     borderRight:'1px solid #D1D2D7',
     height:'100%'
   },
   rightGrid:{
-    padding: '1%',
     height:'100%'
   },
   iconBtn:{
@@ -1011,6 +1010,12 @@ class PrescriptionWrittng extends React.Component{
             });
             if(fl === 1){
               let latestId = `${this.state.MedList.length + 1}`;
+              const medicine= {name: MedVal , id:latestId};
+              const type= {name: TypVal , id:latestId};
+              const frequency= {name: FreqVal , id:latestId};
+              const remark= {name: RemVal , id:latestId};
+              const strength= {name: StrenVal , id:latestId};
+
               this.setState((prevState) => ({
                 MedList: [...prevState.MedList, {name:MedVal, id: latestId }],
                 StrenList: [...prevState.StrenList, {name:StrenVal, id: latestId }],
@@ -1025,6 +1030,14 @@ class PrescriptionWrittng extends React.Component{
                 TempTypValue:'',
 
               }));
+              const medObj = {
+                medicine : medicine,
+                type: type,
+                frequency: frequency,
+                strength: strength,
+                remark: remark
+              };
+              this.props.setMedicine(medObj);
             }
             else{
               let msg = "Already exists in the prescription!";
@@ -1075,7 +1088,7 @@ class PrescriptionWrittng extends React.Component{
     const Med = this.state.MedOnchange?this.state.MedFiltered.map((item)=>{
       return(
         <li key={item.id} onClick={()=>this.addMed(item)} className={classes.searchKeyword}>
-          {item.product_name}
+          {item.product_name} <i>{item.types}</i> {item.strength}
         </li>
       )
     }):null;
@@ -1151,7 +1164,7 @@ class PrescriptionWrittng extends React.Component{
     return (
       <div className={classes.root}>
         <Card className={classes.rootContainer}>
-          <Grid container style={{width:'100%',padding:'0% 1%',borderBottom:'1px solid #D1D2D7'}}>
+          <Grid container style={{width:'100%',padding:'0%',borderBottom:'1px solid #D1D2D7'}}>
             <form className={classes.container} noValidate autoComplete="off">
               <Grid item xs={3}>
                 <TextField
@@ -1217,6 +1230,7 @@ class PrescriptionWrittng extends React.Component{
           </Grid>
           <Grid container style={{ height:'100%'}} >
             <Grid item xs={2} className={classes.leftGrid} style={{ height:'100%',paddingRight:'0px'}}>
+
               {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>C/C</Typography>*/}
               <div className={classes.leftPaneElm}>
                 <TextField
@@ -1227,6 +1241,7 @@ class PrescriptionWrittng extends React.Component{
                   margin="normal"
                   style={{fontSize:'14px'}}
                   InputProps={{
+                    padding:'0% 1%',
                     startAdornment: <InputAdornment position="start">CC</InputAdornment>,
                     endAdornment:  <IconButton
                       onClick={this.addCustomClinicalComplain}
@@ -1238,7 +1253,7 @@ class PrescriptionWrittng extends React.Component{
                 />
 
                 {!this.state.value==""?
-                  <div style={{maxHeight:'150px', width:'90%', position:'relative', overflow:'auto',padding:'0px'}}>
+                  <div style={{zIndex:'100',maxHeight:'200px', width:'150px',backgroundColor:'#f6f6f6', position:'absolute', overflow:'auto',padding:'0px',marginTop:'0px'}}>
                     <ul style={{marginLeft:'-35px',marginTop:'-1px'}}>
                       {!this.state.value==""?CC:null}
                     </ul>
@@ -1340,7 +1355,7 @@ class PrescriptionWrittng extends React.Component{
                 />
 
                 {!this.state.Diagnosisvalue==""?
-                  <div style={{maxHeight:'150px', width:'90%', position:'relative', overflow:'auto',padding:'0px'}}>
+                  <div style={{zIndex:'100',maxHeight:'200px', width:'150px',backgroundColor:'#f6f6f6', position:'absolute', overflow:'auto',padding:'0px',marginTop:'0px'}}>
                     <ul style={{marginLeft:'-35px',marginTop:'-1px'}}>
                       {!this.state.Diagnosisvalue==""?Diagnosis:null}
                     </ul>
@@ -1371,6 +1386,7 @@ class PrescriptionWrittng extends React.Component{
                     </div>
                   )) : null} </div>
               </div>
+              
               {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Tests</Typography>*/}
               <div className={classes.leftPaneElm}>
 
@@ -1391,7 +1407,7 @@ class PrescriptionWrittng extends React.Component{
                 />
 
                 {!this.state.Testsvalue==""?
-                  <div style={{maxHeight:'150px', width:'90%', position:'relative', overflow:'auto',padding:'0px'}}>
+                  <div style={{zIndex:'100',maxHeight:'200px', width:'150px',backgroundColor:'#f6f6f6', position:'absolute', overflow:'auto',padding:'0px',marginTop:'0px'}}>
                     <ul style={{marginLeft:'-35px',marginTop:'-1px'}}>
                       {!this.state.Testsvalue==""?TESTS:null}
                     </ul>
@@ -1456,7 +1472,7 @@ class PrescriptionWrittng extends React.Component{
                     style={{fontSize:'14px'}}
                   />
                   {!this.state.TempMedValue=="" && !this.state.MedFlag?
-                    <div style={{maxHeight:'200px', width:'90%', position:'relative', overflow:'auto',padding:'0px',marginTop:'0px'}}>
+                    <div style={{zIndex:'100',maxHeight:'200px', width:'150px',backgroundColor:'#f6f6f6', position:'absolute', overflow:'auto',padding:'0px',marginTop:'0px'}}>
                       <ul style={{marginLeft:'-35px',marginTop:'-1px'}}>
                         {!this.state.TempMedValue=="" && !this.state.MedFlag?Med:null}
                       </ul>
@@ -1615,7 +1631,7 @@ class PrescriptionWrittng extends React.Component{
             </Grid>
             <Grid item xs={3} className={classes.rightGrid}>
               <Info style={{fontSize:'18px',color:'orange'}}/>
-              <h5 style={{marginTop:'-15px',marginLeft:'31px'}}>Suggestions</h5>
+              <h5 style={{marginTop:'30px'}}>Suggestions</h5>
               {SuggestionShow}
             </Grid>
           </Grid>
