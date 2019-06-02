@@ -20,6 +20,13 @@ import Switch from '@material-ui/core/Switch';
 import PDFViewer from 'mgr-pdf-viewer-react';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+
 
 const styles = theme => ({
   root: {
@@ -106,13 +113,6 @@ TabContainer.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const PreviewPDF = (props) => {
-  return (
-    <div className= {props.classes.settingsTemplateLayoutPreview}>
-      <PDFViewer document={{"binary": props.document  }} scale={.9} hideNavbar={true} loader={<CircularProgress />}/>
-    </div>
-  );
-};
 
 
 class Settings extends React.Component{
@@ -139,7 +139,9 @@ class Settings extends React.Component{
       margin_bottom:0,
       margin_left:0,
       margin_right:0,
-      docUpdated: false
+      docUpdated: false,
+      printLines: true,
+      openPreview: false
     };
   }
 
@@ -166,14 +168,16 @@ class Settings extends React.Component{
       margin_top:this.props.settingsState.margin_top,
       margin_bottom:this.props.settingsState.margin_bottom,
       margin_left:this.props.settingsState.margin_left,
-      margin_right:this.props.settingsState.margin_right
+      margin_right:this.props.settingsState.margin_right,
+      printLines: this.props.settingsState.printLines
     });
 
     const { dr_education, dr_specialist, education_institute, reg_no,
       center_text, chamber_name, chamber_address, chamber_timing, margin_top,
-      margin_bottom, margin_left, margin_right, defaultTemplate} = this.props.settingsState;
+      margin_bottom, margin_left, margin_right, defaultTemplate, printLines} = this.props.settingsState;
 
     const templateData = {
+      preview: true,
       header_center_text: {
         text1:center_text
       },
@@ -199,7 +203,8 @@ class Settings extends React.Component{
       },
       userTemplateSettings:{
         patientDetail: true,
-        leftSideBar: true
+        leftSideBar: true,
+        printLines: printLines
       }
     };
     ipcRenderer.send("updateTemplateRequest", templateData);
@@ -228,7 +233,8 @@ class Settings extends React.Component{
         margin_top:this.props.settingsState.margin_top,
         margin_bottom:this.props.settingsState.margin_bottom,
         margin_left:this.props.settingsState.margin_left,
-        margin_right:this.props.settingsState.margin_right
+        margin_right:this.props.settingsState.margin_right,
+        printLines: this.props.settingsState.printLines
       })
     }
   }
@@ -262,7 +268,9 @@ class Settings extends React.Component{
   handleTabChange = (event, value) => {
     this.setState({ value });
   };
-
+  handleClose = (event, value) => {
+    this.setState({ openPreview : false });
+  };
   handleChange = panel => (event, expanded) => {
     event.preventDefault();
 
@@ -296,6 +304,14 @@ class Settings extends React.Component{
     ipcRenderer.send("printPDF", printerObj);
   };
 
+  handleChangePrintLines = name => event => {
+    this.setState({[name]: event.target.checked });
+    const data = {
+      id: name,
+      value:event.target.checked
+    };
+    this.props.changeTemplateSettings(data);
+  };
 
   updateTemplate = (event)=>{
     //event.preventDefault();
@@ -303,14 +319,16 @@ class Settings extends React.Component{
     console.log(this.state);
     const { dr_name, dr_education, dr_specialist, education_institute, reg_no,
       center_text, chamber_name, chamber_address, chamber_timing, margin_top,
-      margin_bottom, margin_left, margin_right, defaultTemplate} = this.state;
-
+      margin_bottom, margin_left, margin_right, defaultTemplate, printLines} = this.state;
+    const {firstname , lastname} = this.props.usermanagementState.profile;
+    const username = firstname +` ` +lastname;
     const templateData = {
+      preview: true,
       header_center_text: {
        text1:center_text
       },
       header_left_text: {
-       dr_name: dr_name,
+       dr_name: username,
        dr_education: dr_education,
        dr_specialist: dr_specialist,
        education_institute: education_institute,
@@ -331,7 +349,8 @@ class Settings extends React.Component{
       },
       userTemplateSettings:{
         patientDetail: true,
-        leftSideBar: true
+        leftSideBar: true,
+        printLines: printLines
       }
     };
     ipcRenderer.send("updateTemplateRequest", templateData);
@@ -355,10 +374,14 @@ class Settings extends React.Component{
       margin_top:this.state.margin_top,
       margin_bottom:this.state.margin_bottom,
       margin_left:this.state.margin_left,
-      margin_right:this.state.margin_right
+      margin_right:this.state.margin_right,
+      printLines: this.state.printLines
     };
 
     this.props.updateTemplateSettings(settings);
+
+
+    this.setState({openPreview : true})
   };
 
 
@@ -374,6 +397,13 @@ class Settings extends React.Component{
 
       return(
       <div className={classes.root}>
+        <Dialog open={this.state.openPreview} onClose={this.handleClose} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">Test Print Preview</DialogTitle>
+          <DialogContent>
+            <PDFViewer document={{"binary": document  }} scale={.9}  loader={<CircularProgress />}/>
+          </DialogContent>
+        </Dialog>
+
         <AppBar position="static" color="default">
           <Tabs value={value} onChange={this.handleTabChange} variant="scrollable" scrollButtons="on" indicatorColor="primary" textColor="primary">
             <Tab label="Printer" icon= {<IconSettingsPrinter />} />
@@ -421,9 +451,6 @@ class Settings extends React.Component{
 
         {value === 1 &&
         <div className= {classes.settingsTemplateLayoutRoot}>
-
-          <PreviewPDF document={document} classes={classes} />
-
           <div className= {classes.settingsTemplateLayoutOptions}>
 
             <span style={{marginLeft:'1.5%'}}>
@@ -455,11 +482,21 @@ class Settings extends React.Component{
 
 
             </div>
+            <div>
+              <FormControlLabel
+                control={
+                  <Checkbox checked={this.state.printLines}
+                            onChange={this.handleChangePrintLines('printLines')}
+                            value="printLines" />
+                }
+                label="Display Lines"
+              />
+            </div>
             <div className= {classes.LayoutOptionsMargin}>
-              <TextField disabled={defaultTemplate} onChange={this.handleSettingChange} id="margin_top" type="number" label="Top" value= {margin_top} className={classes.layoutOptionsTextfield}/>
-              <TextField disabled={defaultTemplate} onChange={this.handleSettingChange} id="margin_bottom" type="number" label="Bottom" value= {margin_bottom} className={classes.layoutOptionsTextfield}/>
-              <TextField disabled={defaultTemplate} onChange={this.handleSettingChange} id="margin_left" type="number" label="Left" value= {margin_left} className={classes.layoutOptionsTextfield}/>
-              <TextField disabled={defaultTemplate} onChange={this.handleSettingChange} id="margin_right" type="number" label="Right" value= {margin_right} className={classes.layoutOptionsTextfield}/>
+              <TextField onChange={this.handleSettingChange} id="margin_top" type="number" label="Top" value= {margin_top} className={classes.layoutOptionsTextfield}/>
+              <TextField onChange={this.handleSettingChange} id="margin_bottom" type="number" label="Bottom" value= {margin_bottom} className={classes.layoutOptionsTextfield}/>
+              <TextField onChange={this.handleSettingChange} id="margin_left" type="number" label="Left" value= {margin_left} className={classes.layoutOptionsTextfield}/>
+              <TextField onChange={this.handleSettingChange} id="margin_right" type="number" label="Right" value= {margin_right} className={classes.layoutOptionsTextfield}/>
 
             </div>
             <Button variant="contained" color="primary" className={classes.button}

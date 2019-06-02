@@ -20,7 +20,8 @@ let initialState = {
   margin_bottom:'',
   margin_left:'',
   margin_right:'',
-  document: ''
+  document: '',
+  printLines: true
 };
 
 export default function settingsState(state: any = initialState, action){
@@ -60,6 +61,7 @@ export default function settingsState(state: any = initialState, action){
       return {
         ...state,
         defaultPrinter: action.payload.default_printer,
+        printLines : action.payload.printLines === "1",
         backgroundPrint: action.payload.background_print === "1",
         defaultTemplate: action.payload.printTemplate === "1",
         dr_education:action.payload.dr_education,

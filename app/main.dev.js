@@ -159,10 +159,11 @@ ipcMain.on('generate-pdf', (event, arg) => {
   workerWindow.webContents.printToPDF({}, (error, data) => {
     if (error) throw error;
     event.returnValue = data;
-    fs.writeFile('./app/print.pdf', data, (error) => {
-      if (error) throw error;
-      console.log('Write PDF successfully.');
-    })
+    // fs.writeFile('./app/print.pdf', data, (error) => {
+    //   if (error) throw error;
+    //
+    // })
+    console.log('Write PDF successfully.');
   });
 });
 

@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     default_printer: DataTypes.STRING,
     background_print: DataTypes.STRING,
     access_token: DataTypes.STRING,
+    printLines: DataTypes.STRING,
     dr_education: DataTypes.STRING,
     dr_specialist: DataTypes.STRING,
     education_institute: DataTypes.STRING,
