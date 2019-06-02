@@ -1384,6 +1384,7 @@ class PrescriptionWrittng extends React.Component{
                     </div>
                   )) : null} </div>
               </div>
+              
               {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Tests</Typography>*/}
               <div className={classes.leftPaneElm}>
 
