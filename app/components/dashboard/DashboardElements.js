@@ -41,10 +41,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import NativeSelect from '@material-ui/core/NativeSelect';
 
-import deburr from 'lodash/deburr';
-import Autosuggest from 'react-autosuggest';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
 
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
@@ -599,26 +595,26 @@ class DashboardElements extends Component {
                 <SearchIcon />
               </div>
               <div style={{width:'85%',marginLeft:'8%'}}>
-              <Autosuggest
-                {...autosuggestProps}
-                inputProps={{
-                  classes,
-                  placeholder: 'Search...',
-                  value: this.state.single,
-                  onChange: this.handleChange('single'),
-                }}
-                theme={{
-                  container: classes.container,
-                  suggestionsContainerOpen: classes.suggestionsContainerOpen,
-                  suggestionsList: classes.suggestionsList,
-                  suggestion: classes.suggestion,
-                }}
-                renderSuggestionsContainer={options => (
-                  <Paper {...options.containerProps} square>
-                    {options.children}
-                  </Paper>
-                )}
-              />
+              {/*<Autosuggest*/}
+                {/*{...autosuggestProps}*/}
+                {/*inputProps={{*/}
+                  {/*classes,*/}
+                  {/*placeholder: 'Search...',*/}
+                  {/*value: this.state.single,*/}
+                  {/*onChange: this.handleChange('single'),*/}
+                {/*}}*/}
+                {/*theme={{*/}
+                  {/*container: classes.container,*/}
+                  {/*suggestionsContainerOpen: classes.suggestionsContainerOpen,*/}
+                  {/*suggestionsList: classes.suggestionsList,*/}
+                  {/*suggestion: classes.suggestion,*/}
+                {/*}}*/}
+                {/*renderSuggestionsContainer={options => (*/}
+                  {/*<Paper {...options.containerProps} square>*/}
+                    {/*{options.children}*/}
+                  {/*</Paper>*/}
+                {/*)}*/}
+              {/*/>*/}
               </div>
               {/* <InputBase
                 placeholder="Search…"
