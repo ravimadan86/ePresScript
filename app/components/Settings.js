@@ -62,6 +62,7 @@ const styles = theme => ({
   },
   button: {
     margin: theme.spacing.unit,
+    width: '200px'
   },
   rightIcon: {
     marginLeft: theme.spacing.unit,
@@ -463,7 +464,7 @@ class Settings extends React.Component{
             </span>
             <div className= {classes.LayoutOptionsContent}>
               <div className= {classes.LayoutOptionsContentLeft}>
-                <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="dr_name" label="Dr Name" value={dr_name} className={classes.layoutOptionsTextfield}/>
+                <TextField disabled={true} onChange={this.handleSettingChange} id="dr_name" label="Dr Name" value={dr_name} className={classes.layoutOptionsTextfield}/>
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="dr_education" label="Education" value={dr_education} placeholder="Placeholder" className={classes.layoutOptionsTextfield} />
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="dr_specialist" label="Specialist" value={dr_specialist} placeholder="Placeholder" className={classes.layoutOptionsTextfield}/>
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="education_institute" label="Education" value={education_institute} placeholder="Placeholder" className={classes.layoutOptionsTextfield}/>

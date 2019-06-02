@@ -7,7 +7,7 @@ import {setAdvice , setPatientAge, setCC, setMedicine , setOE , setPatientEmail,
   setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests ,
   deleteCC, updateCC , deleteOE , updateOE , updateTest, deleteTest, updateMedicineFequency, updateMedicineName,
   updateMedicineRemark, updateMedicineStrength, updateMedicineType, deleteMedicine, deleteDiagnosis, setDiagnosis,
-  updateDiagnosis} from "../features/prescription";
+  updateDiagnosis , resetState} from "../features/prescription";
 
 
 const mapStateToProps = state => ({
@@ -15,7 +15,8 @@ const mapStateToProps = state => ({
   securityState: state.securityState,
   treatmentState: state.treatmentState,
   prescriptionState : state.prescriptionState,
-  settingsState: state.settingsState
+  settingsState: state.settingsState,
+  usermanagementState: state.usermanagementState
 });
 
 const mapDispatchToProps = {
@@ -23,7 +24,7 @@ const mapDispatchToProps = {
   setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests ,
   deleteCC, updateCC , deleteOE , updateOE , updateTest, deleteTest, updateMedicineFequency, updateMedicineName,
   updateMedicineRemark, updateMedicineStrength, updateMedicineType, deleteMedicine, deleteDiagnosis, setDiagnosis,
-  updateDiagnosis
+  updateDiagnosis, resetState
 };
 
 class PrescriptionContainer extends Component {
@@ -41,7 +42,7 @@ class PrescriptionContainer extends Component {
       setPatientMobile, setPatientName , setPatientPatientId , setPatientSex , setTests ,
       deleteCC, updateCC , deleteOE , updateOE , updateTest, deleteTest, updateMedicineFequency, updateMedicineName,
       updateMedicineRemark, updateMedicineStrength, updateMedicineType, deleteMedicine, deleteDiagnosis, setDiagnosis,
-      updateDiagnosis, settingsState
+      updateDiagnosis, settingsState, usermanagementState , resetState
     } = this.props;
     return (
       <PrescriptionWritting
@@ -50,7 +51,9 @@ class PrescriptionContainer extends Component {
         medicineState={medicineState}
         prescriptionState={prescriptionState}
         settingsState={settingsState}
+        usermanagementState={usermanagementState}
 
+        resetState={resetState}
         setDiagnosis={setDiagnosis}
         updateDiagnosis={updateDiagnosis}
         deleteDiagnosis={deleteDiagnosis}

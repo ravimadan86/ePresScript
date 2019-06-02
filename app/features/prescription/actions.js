@@ -2,6 +2,10 @@ import {constants} from './constants';
 import type {Store} from "../../store/reducers/types";
 import {services} from "./services";
 
+export const resetState = patientName => ({
+  type: constants.RESET_STATE
+});
+
 export const setPatientName = patientName => ({
   type: constants.SET_PATIENT_NAME,
   payload: patientName

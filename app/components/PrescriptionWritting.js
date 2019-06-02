@@ -254,6 +254,8 @@ class PrescriptionWrittng extends React.Component{
 
     let size = this.state.MedList.length;
 
+    let medList = [];
+
     for(let i=0;i<size;i++){
 
       let MedName = this.state.MedList[i].name;
@@ -263,29 +265,34 @@ class PrescriptionWrittng extends React.Component{
       let RemarkName = this.state.RemList[i].name;
       let Idval = `${this.state.Medicines.length + 1}`;
 
-      //Checking if there is any duplicate for safety, if Save button is double pressed.
-      let fl = 1;
-      let loopMed = this.state.Medicines.map((j)=>{
-        if(j.product_name.toUpperCase() === MedName.toUpperCase() && j.strength.toUpperCase() === strengthName.toUpperCase()){
-          fl = 0;
-        }
-      });
-
-      if(fl==1){
-        this.setState((prevState) => ({
-          Medicines: [...prevState.Medicines, {id: Idval, product_name:MedName, type:TypeName, strength: strengthName, frequency: FrequencyName, remark: RemarkName}]
-        }));
-      }
+      let medicine = {id: Idval, product_name:MedName, type:TypeName, strength: strengthName, frequency: FrequencyName, remark: RemarkName};
+      console.log(medicine);
+      medList.push(medicine);
+      // //Checking if there is any duplicate for safety, if Save button is double pressed.
+      // let fl = 1;
+      // let loopMed = this.state.Medicines.map((j)=>{
+      //   if(j.product_name.toUpperCase() === MedName.toUpperCase() && j.strength.toUpperCase() === strengthName.toUpperCase()){
+      //     fl = 0;
+      //   }
+      // });
+      //
+      // if(fl==1){
+      //   this.setState((prevState) => ({
+      //     Medicines: [...prevState.Medicines, {id: Idval, product_name:MedName, type:TypeName, strength: strengthName, frequency: FrequencyName, remark: RemarkName}]
+      //   }));
+      // }
     }
+
 
     const {firstname , lastname} = this.props.usermanagementState.profile;
     const username = firstname +` ` +lastname;
 
-    let medList = this.state.Medicines;
+    console.log(this.state);
     const { dr_education, dr_specialist, education_institute, reg_no,
       center_text, chamber_name, chamber_address, chamber_timing, margin_top,
       margin_bottom, margin_left, margin_right, defaultTemplate, printLines} = this.props.settingsState;
 
+    let date = new Date();
     const templateData = {
       preview: false,
       header_center_img : 'data:image/gif;base64,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',
@@ -325,7 +332,7 @@ class PrescriptionWrittng extends React.Component{
         sex: `Sex: ${this.state.Sex}`,
         age: `Age: ${this.state.Age}Yrs`,
         id: 'PID: 123456789',
-        date: `Date: ${new Date()}`
+        date: `Date: ${date.getDate()}/${date.getMonth()}/${date.getFullYear()} `
       },
       cc: this.props.prescriptionState.cc,
       oe: this.props.prescriptionState.oe,
@@ -350,6 +357,7 @@ class PrescriptionWrittng extends React.Component{
   };
   clearPrescription = () =>{
     console.log("Clear Prescription request");
+    this.props.resetState();
   };
   componentDidMount(){
     console.log(this.props.prescriptionState.cc);
@@ -1048,10 +1056,7 @@ class PrescriptionWrittng extends React.Component{
       }
     })
   };
-  handleSaveMedicine=()=>{
 
-
-  }
   render(){
     console.log("Props " , this.props);
     console.log("State " , this.state);
@@ -1135,16 +1140,12 @@ class PrescriptionWrittng extends React.Component{
                         console.log(med.product_name);
                         return(
                           <li key={med.medicine_id} style={{marginBottom:"5px"}}>
-                            {/*<h5>{`${med.product_name}`}</h5>*/}
+
                             <FormControlLabel
                               control={
-                                <Checkbox
-                                  checked={med.checked}
-                                  onChange={()=>this.handleSelectionClick(med.medicine_id, i.treatment_id)}
-
+                                <Checkbox checked={med.checked} onChange={()=>this.handleSelectionClick(med.medicine_id, i.treatment_id)}
                                   icon={<CheckBoxOutlineBlankIcon fontSize="small" />}
                                   checkedIcon={<CheckBoxIcon fontSize="small" />}
-                                  //value="checkedI"
                                 />
                               }
                               label={`${med.product_name}`}
@@ -1167,64 +1168,20 @@ class PrescriptionWrittng extends React.Component{
           <Grid container style={{width:'100%',padding:'0%',borderBottom:'1px solid #D1D2D7'}}>
             <form className={classes.container} noValidate autoComplete="off">
               <Grid item xs={3}>
-                <TextField
-                  required={true}
-                  id="PatientName"
-                  label="Patient Name"
-                  className={classes.textField}
-                  value={patientName}
-                  onChange={this.handlePatientDetailChange}
-                  margin="normal"
-                />
+                <TextField required={true} id="PatientName" label="Patient Name" className={classes.textField} value={patientName} onChange={this.handlePatientDetailChange} margin="normal"/>
               </Grid>
               <Grid item xs={3}>
-                <TextField
-                  required={true}
-                  id="Age"
-                  label="Age"
-                  className={classes.textField2}
-                  value={patientAge}
-                  onChange={this.handlePatientDetailChange}
-                  margin="normal"
-                />
-                <TextField
-                  id="Sex"
-                  label="Sex"
-                  className={classes.textField2}
-                  value={patientSex}
-                  onChange={this.handlePatientDetailChange}
-                  margin="normal"
-                />
+                <TextField required={true} id="Age" label="Age" className={classes.textField2} value={patientAge} onChange={this.handlePatientDetailChange} margin="normal" type="number"/>
+                <TextField id="Sex" label="Sex" className={classes.textField2} value={patientSex} onChange={this.handlePatientDetailChange} margin="normal"/>
               </Grid>
               <Grid item xs={2}>
-                <TextField
-                  id="Mobile"
-                  label="Mobile"
-                  className={classes.textField}
-                  value={patientMobile}
-                  onChange={this.handlePatientDetailChange}
-                  margin="normal"
-                />
+                <TextField id="Mobile" label="Mobile" className={classes.textField} value={patientMobile} onChange={this.handlePatientDetailChange} margin="normal"/>
               </Grid>
               <Grid item xs={2}>
-                <TextField
-                  id="Email"
-                  label="Email"
-                  className={classes.textField}
-                  value={patientEmail}
-                  onChange={this.handlePatientDetailChange}
-                  margin="normal"
-                />
+                <TextField id="Email" label="Email" className={classes.textField} value={patientEmail} onChange={this.handlePatientDetailChange} margin="normal"/>
               </Grid>
               <Grid item xs={2}>
-                <TextField
-                  id="PatientId"
-                  label="Id"
-                  className={classes.textField}
-                  value={patientPatientId}
-                  onChange={this.handlePatientDetailChange}
-                  margin="normal"
-                />
+                <TextField id="PatientId" label="Id" className={classes.textField} value={patientPatientId} onChange={this.handlePatientDetailChange} margin="normal"/>
               </Grid>
             </form>
           </Grid>
@@ -1233,13 +1190,7 @@ class PrescriptionWrittng extends React.Component{
 
               {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>C/C</Typography>*/}
               <div className={classes.leftPaneElm}>
-                <TextField
-                  id="standard-name"
-                  className={classes.cctextField}
-                  value={this.state.value}
-                  onChange={this.CCsearchKeywords}
-                  margin="normal"
-                  style={{fontSize:'14px'}}
+                <TextField id="standard-name" className={classes.cctextField} value={this.state.value} onChange={this.CCsearchKeywords} margin="normal" style={{fontSize:'14px'}}
                   InputProps={{
                     padding:'0% 1%',
                     startAdornment: <InputAdornment position="start">CC</InputAdornment>,
@@ -1263,15 +1214,7 @@ class PrescriptionWrittng extends React.Component{
                   {cc != null ?
                   cc.slice(0).map((itemx,index) => (
                     <div key={index} className={classes.listElmContent}>
-                      <TextField
-                        id={itemx.id}
-                        multiline
-                        className={classes.cctextField}
-                        name={`${index}`}
-                        value={itemx.name}
-                        onChange={this.onUpdateCC.bind(this)}
-                        margin="normal"
-                        style={{fontSize:'14px'}}
+                      <TextField id={itemx.id} multiline className={classes.cctextField} name={`${index}`} value={itemx.name} onChange={this.onUpdateCC.bind(this)} margin="normal" style={{fontSize:'14px'}}
                         InputProps={{
                           className: classes.cctextFieldInput,
                           startAdornment: <InputAdornment position="start">
@@ -1290,14 +1233,7 @@ class PrescriptionWrittng extends React.Component{
               </div>
               {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>O/E</Typography>*/}
               <div className={classes.leftPaneElm}>
-                <TextField
-                  id=""
-                  multiline
-                  className={classes.cctextField}
-                  value={this.state.OEvalue}
-                  onChange={this.OEsearchKeywords}
-                  margin="normal"
-                  style={{fontSize:'14px'}}
+                <TextField id="" multiline className={classes.cctextField} value={this.state.OEvalue} onChange={this.OEsearchKeywords} margin="normal" style={{fontSize:'14px'}}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">O/E</InputAdornment>,
                     endAdornment:  <IconButton onClick={this.addCustomOE}
@@ -1310,39 +1246,20 @@ class PrescriptionWrittng extends React.Component{
                   {oe != null ?
                   oe.slice(0).reverse().map((itemx,index) => (
                     <div key={index} className={classes.listElmContent}>
-                      <TextField
-                        id={itemx.id}
-                        multiline
-                        className={classes.cctextField}
-                        name={`${index}`}
-                        value={itemx.name}
-                        onChange={this.onUpdateOE.bind(this)}
-                        margin="normal"
-                        style={{fontSize:'14px'}}
-                        InputProps={{
-                          className: classes.cctextFieldInput,
-                          startAdornment: <InputAdornment position="start">
-                            <Done />
-                          </InputAdornment>,
-                          endAdornment: <IconButton
-                            onClick={() => this.onRemoveOE(index)}>
-                            <Cancel  style={{color:'#7f7f7f', fontSize:'18px'}}/>
-                          </IconButton>
-                        }}
-                      />
+                      <TextField id={itemx.id} multiline className={classes.cctextField} name={`${index}`} value={itemx.name} onChange={this.onUpdateOE.bind(this)} margin="normal" style={{fontSize:'14px'}}
+                                 InputProps={{className: classes.cctextFieldInput, startAdornment: <InputAdornment position="start"><Done /></InputAdornment>,
+                                   endAdornment: <IconButton
+                                     onClick={() => this.onRemoveOE(index)}>
+                                     <Cancel  style={{color:'#7f7f7f', fontSize:'18px'}}/>
+                                   </IconButton>
+                                 }}/>
 
                     </div>
                   )) : null} </div>
               </div>
               {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Diagnosis</Typography>*/}
               <div className={classes.leftPaneElm}>
-                <TextField
-                  id="Diagnosis"
-                  className={classes.cctextField}
-                  value={this.state.Diagnosisvalue}
-                  onChange={this.DiagnosisSearchKeywords}
-                  margin="normal"
-                  style={{fontSize:'14px'}}
+                <TextField id="Diagnosis" className={classes.cctextField} value={this.state.Diagnosisvalue} onChange={this.DiagnosisSearchKeywords} margin="normal" style={{fontSize:'14px'}}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">Diagnosis</InputAdornment>,
                     endAdornment:  <IconButton
@@ -1365,15 +1282,7 @@ class PrescriptionWrittng extends React.Component{
                   {diagnosis != null ?
                   diagnosis.slice(0).reverse().map((itemx,index) => (
                     <div key={index} className={classes.listElmContent}>
-                      <TextField
-                        id={itemx.id}
-                        multiline
-                        className={classes.cctextField}
-                        name={`${index}`}
-                        value={itemx.name}
-                        onChange={this.onUpdateDiagnosis.bind(this)}
-                        margin="normal"
-                        style={{fontSize:'14px'}}
+                      <TextField id={itemx.id} multiline className={classes.cctextField} name={`${index}`} value={itemx.name} onChange={this.onUpdateDiagnosis.bind(this)} margin="normal" style={{fontSize:'14px'}}
                         InputProps={{
                           className: classes.cctextFieldInput,
                           startAdornment: <InputAdornment position="start"> <Done /></InputAdornment>,
@@ -1386,7 +1295,7 @@ class PrescriptionWrittng extends React.Component{
                     </div>
                   )) : null} </div>
               </div>
-              
+
               {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Tests</Typography>*/}
               <div className={classes.leftPaneElm}>
 
@@ -1418,9 +1327,7 @@ class PrescriptionWrittng extends React.Component{
                   tests.slice(0).reverse().map((itemx,index) => (
 
                     <div key={index} className={classes.listElmContent}>
-                      <TextField
-                        id={itemx.id}
-                        multiline
+                      <TextField id={itemx.id} multiline
                         InputProps={{
                           className: classes.cctextFieldInput,
                           startAdornment: <InputAdornment position="start">
@@ -1445,32 +1352,14 @@ class PrescriptionWrittng extends React.Component{
               </div>
               {/*<Typography style={{marginTop:'5px', color:'#7f7f7f', fontWeight:'bold'}}>Advice</Typography>*/}
               <div className={classes.leftPaneElm}>
-                <TextField
-                  id="advice"
-                  label="Add Advice"
-                  multiline
-                  rowsMax="3"
-                  value={advice}
-                  onChange={this.handleAdviceChange}
-                  className={classes.adviceTextField}
-                  margin="normal"
-                  style={{fontSize:'14px',marginTop:'-3px'}}
-                />
+                <TextField id="advice" label="Add Advice" multiline rowsMax="3" value={advice} onChange={this.handleAdviceChange} className={classes.adviceTextField} margin="normal" style={{fontSize:'14px',marginTop:'-3px'}}/>
               </div>
             </Grid>
             <Grid item xs={7} className={classes.centerGrid} >
 
               <Grid container>
                 <Grid item xs={3}>
-                  <TextField
-                    id=""
-                    label="Medicine Name"
-                    className={classes.medtextField}
-                    value={this.state.TempMedValue}
-                    onChange={this.MedSearchKeywords}
-                    margin="normal"
-                    style={{fontSize:'14px'}}
-                  />
+                  <TextField id="" label="Medicine Name" className={classes.medtextField} value={this.state.TempMedValue} onChange={this.MedSearchKeywords} margin="normal" style={{fontSize:'14px'}}/>
                   {!this.state.TempMedValue=="" && !this.state.MedFlag?
                     <div style={{zIndex:'100',maxHeight:'200px', width:'150px',backgroundColor:'#f6f6f6', position:'absolute', overflow:'auto',padding:'0px',marginTop:'0px'}}>
                       <ul style={{marginLeft:'-35px',marginTop:'-1px'}}>
@@ -1480,53 +1369,17 @@ class PrescriptionWrittng extends React.Component{
                   }
                 </Grid>
                 <Grid item xs={2}>
-                  <TextField
-                    id="strength"
-                    label="Strength"
-                    className={classes.medtextField}
-                    value={this.state.TempStrenValue}
-                    onChange={this.StrenSearchKeywords}
-                    margin="normal"
-                    style={{fontSize:'14px'}}
-                  />
+                  <TextField id="strength" label="Strength" className={classes.medtextField} value={this.state.TempStrenValue} onChange={this.StrenSearchKeywords} margin="normal" style={{fontSize:'14px'}}/>
                 </Grid>
                 <Grid item xs={2}>
-                  <TextField
-                    id="type"
-                    label="Type"
-                    className={classes.medtextField}
-                    value={this.state.TempTypValue}
-                    onChange={this.TypeSearchKeywords}
-                    margin="normal"
-                    style={{fontSize:'14px'}}
-                  />
+                  <TextField id="type" label="Type" className={classes.medtextField} value={this.state.TempTypValue} onChange={this.TypeSearchKeywords} margin="normal" style={{fontSize:'14px'}}/>
                 </Grid>
                 <Grid item xs={2}>
-                  <TextField
-                    id="frequency"
-                    label="Frequency"
-                    className={classes.medtextField}
-                    value={this.state.TempFreqValue}
-                    onChange={this.FreqSearchKeywords}
-                    margin="normal"
-                    style={{fontSize:'14px'}}
-                  />
+                  <TextField id="frequency" label="Frequency" className={classes.medtextField} value={this.state.TempFreqValue} onChange={this.FreqSearchKeywords} margin="normal" style={{fontSize:'14px'}}/>
                 </Grid>
                 <Grid item xs={3}>
-                  <TextField
-                    id="remark"
-                    label="Remark"
-                    className={classes.medtextField}
-                    value={this.state.TempRemValue}
-                    onChange={this.RemarkSearchKeywords}
-                    margin="normal"
-                    style={{fontSize:'14px'}}
-                  />
-                  <IconButton
-                    onClick={this.addAllMedicine}
-                    disabled={!this.state.TempMedValue}
-                    style={{marginTop:'-40px',marginLeft:'80%'}}
-                  >
+                  <TextField id="remark" label="Remark" className={classes.medtextField} value={this.state.TempRemValue} onChange={this.RemarkSearchKeywords} margin="normal" style={{fontSize:'14px'}}/>
+                  <IconButton onClick={this.addAllMedicine} disabled={!this.state.TempMedValue} style={{marginTop:'-40px',marginLeft:'80%'}}>
                     <Check style={{color:'#7f7f7f'}}/>
                   </IconButton>
                 </Grid>
@@ -1537,69 +1390,20 @@ class PrescriptionWrittng extends React.Component{
                   medicine.map((itemx,index) => (
                     <Grid container key={index} style={{marginTop:'10px'}}>
                       <Grid item xs={3}>
-                        <TextField
-                          id={itemx.id}
-                          name={`${index}`}
-                          //label="Medicine Name"
-                          className={classes.medtextField}
-                          value={itemx.name}
-                          onChange={this.onUpdateMed.bind(this)}
-                          margin="normal"
-                          style={{fontSize:'14px'}}
-                        />
+                        <TextField id={itemx.id} name={`${index}`} className={classes.medtextField} value={itemx.name} onChange={this.onUpdateMed.bind(this)} margin="normal" style={{fontSize:'14px'}}/>
                       </Grid>
                       <Grid item xs={2}>
-                        <TextField
-                          id={itemx.id}
-                          name={`${index}`}
-                          //label="Strength"
-                          className={classes.medtextField}
-                          value={strength[index].name}
-                          onChange={this.onUpdateStren.bind(this)}
-                          margin="normal"
-                          style={{fontSize:'14px'}}
-                        />
+                        <TextField id={itemx.id} name={`${index}`} className={classes.medtextField} value={strength[index].name} onChange={this.onUpdateStren.bind(this)} margin="normal" style={{fontSize:'14px'}}/>
                       </Grid>
                       <Grid item xs={2}>
-                        <TextField
-                          id={itemx.id}
-                          name={`${index}`}
-                          //label="Type"
-                          className={classes.medtextField}
-                          value={type[index].name}
-                          onChange={this.onUpdateType.bind(this)}
-                          margin="normal"
-                          style={{fontSize:'14px'}}
-                        />
+                        <TextField id={itemx.id} name={`${index}`} className={classes.medtextField} value={type[index].name} onChange={this.onUpdateType.bind(this)} margin="normal" style={{fontSize:'14px'}}/>
                       </Grid>
                       <Grid item xs={2}>
-                        <TextField
-                          id={itemx.id}
-                          name={`${index}`}
-                          //label="Frequency"
-                          className={classes.medtextField}
-                          value={frequency[index].name}
-                          onChange={this.onUpdateFreq.bind(this)}
-                          margin="normal"
-                          style={{fontSize:'14px'}}
-                        />
+                        <TextField id={itemx.id} name={`${index}`} className={classes.medtextField} value={frequency[index].name} onChange={this.onUpdateFreq.bind(this)} margin="normal" style={{fontSize:'14px'}}/>
                       </Grid>
                       <Grid item xs={3}>
-                        <TextField
-                          id={itemx.id}
-                          name={`${index}`}
-                          //label="Remark"
-                          className={classes.medtextField}
-                          value={remark[index].name}
-                          onChange={this.onUpdateRem.bind(this)}
-                          margin="normal"
-                          style={{fontSize:'14px'}}
-                        />
-                        <IconButton
-                          onClick={() => this.removeAllMedicine(index)}
-                          //disabled={!this.state.TempMedValue}
-                          style={{marginTop:'-40px',marginLeft:'80%'}}
-                        >
+                        <TextField id={itemx.id} name={`${index}`} className={classes.medtextField} value={remark[index].name} onChange={this.onUpdateRem.bind(this)} margin="normal" style={{fontSize:'14px'}}/>
+                        <IconButton onClick={() => this.removeAllMedicine(index)} style={{marginTop:'-40px',marginLeft:'80%'}}>
                           <Cancel style={{color:'#7f7f7f'}}/>
                         </IconButton>
                       </Grid>
@@ -1610,15 +1414,10 @@ class PrescriptionWrittng extends React.Component{
               </div>
 
               <footer className={classes.footer}>
-                <TextField
-                  id="date"
-                  label="Follow Up Date"
-                  type="date"
-                  defaultValue= "2017-05-24"
-                  className={classes.textField}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                <TextField id="date" label="Follow Up Date" type="date" defaultValue= "2017-05-24" className={classes.textField}
+                           InputLabelProps={{
+                             shrink: true,
+                           }}
                 />
                 <Button variant="outlined" color="primary" className={classes.button} onClick={() => this.clearPrescription()}>
                   Clear
@@ -1649,13 +1448,7 @@ class PrescriptionWrittng extends React.Component{
           }}
           message={<span id="message-id">{this.state.SnackbarMessage}</span>}
           action={[
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              className={classes.close}
-              onClick={this.handleCloseSnackbar}
-            >
+            <IconButton key="close" aria-label="Close" color="inherit" className={classes.close} onClick={this.handleCloseSnackbar}>
               <CloseIcon />
             </IconButton>,
           ]}
