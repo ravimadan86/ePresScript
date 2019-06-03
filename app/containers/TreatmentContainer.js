@@ -3,9 +3,9 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux';
 import Treatment from '../components/Treatment';
-import {fetchTreatment , saveTreatment} from "../features/treatment";
+import {fetchTreatment , saveTreatment, updateTreatmentMedicine} from "../features/treatment";
 import {saveMedicine} from "../features/medicine";
-import {updateTreatmentMedicine} from "../features/treatment_v2";
+
 
 const mapStateToProps = state => ({
   medicineState: state.medicineState,

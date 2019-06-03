@@ -5,31 +5,35 @@ import type {Store} from "../../store/reducers/types";
 
 export const treatmentActions = {
   saveTreatment,
-  fetchTreatment
+  fetchTreatment,
+  updateTreatmentMedicine
 };
 
 export function saveTreatment(value: object) {
   console.log("inside saveTreatment");
-  return (dispatch: any) => {
-    services.saveMedicine(value).then(
-      (medicine ) => {
-        if (medicine) {
-          const msg = `New medicine added!`;
-          dispatch(success(medicine, msg));
+  return (dispatch: any, getState: Store) => {
+    const { securityState } = getState();
+    const { access_token } = securityState.user;
+    services.saveTreatment(value, access_token).then(
+      (treatment ) => {
+        if (treatment) {
+          const msg = `New Treatment added!`;
+          dispatch(success(treatment, msg));
         } else {
           const errorString = `Please Check the details you have provided!`;
           dispatch(failure(errorString));
         }
       },
       (error: any) => {
-        const errorString = `Cannot save the Medicine`;
+        const errorString = `Cannot save Treatment`;
         dispatch(failure(errorString));
       }
     );
   };
-  function success(medicine , msg) { return {
-    type: constants.SAVE_MEDICINE_SUCCESS,
-    medicine
+  function success(treatment , msg) { return {
+    type:SNACKBAR_OPEN,
+    message: msg,
+    variant: 'success'
   }}
   function failure(error) {
     return {
@@ -66,6 +70,35 @@ export function fetchTreatment() {
   function failure(error) {
     return {
       type: constants.FETCH_TREATMENT_FAILURE , error
+    }
+  }
+}
+
+export function updateTreatmentMedicine(value: object) {
+  console.log("inside saveTreatment");
+  return (dispatch , getState: Store) => {
+    dispatch({type: constants.UPDATE_TREATMENT_MEDICINE_REQUEST,
+      payload: value});
+    const { securityState } = getState();
+    const { access_token } = securityState.user;
+    services.updateTreatmentMedicine(access_token, value).then(
+      (response ) => {
+        dispatch(success(response));
+      },
+      (error: any) => {
+        //const errorString = `Cannot save the Medicine`;
+        dispatch(failure(error));
+      }
+    );
+  };
+  function success(response) { return {
+    type: constants.UPDATE_TREATMENT_MEDICINE_SUCCESS,
+    payload: response
+  }}
+  function failure(error) {
+    return {
+      type: constants.UPDATE_TREATMENT_MEDICINE_FAILURE,
+      payload: error
     }
   }
 }

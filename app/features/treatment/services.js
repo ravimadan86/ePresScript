@@ -3,7 +3,8 @@ import API_CONFIG from "../../store/config/config";
 
 export const services = {
   saveTreatment: saveTreatment,
-  fetchTreatment: fetchTreatment
+  fetchTreatment: fetchTreatment,
+  updateTreatmentMedicine: updateTreatmentMedicine
 };
 
 
@@ -18,17 +19,29 @@ function fetchTreatment(access_token) {
     .then(handleResponse, handleError);
 }
 
-function saveTreatment(access_token) {
+function saveTreatment(requestBody,access_token) {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' ,
-      'Authorization' : 'Bearer ' + access_token}
+      'Authorization' : 'Bearer ' + access_token},
+    body: JSON.stringify(requestBody)
   };
 
   return fetch(API_CONFIG.TREATMENT, requestOptions)
     .then(handleResponse, handleError);
 }
 
+function updateTreatmentMedicine(access_token,data) {
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' ,
+      'Authorization' : 'Bearer ' + access_token},
+    body: JSON.stringify(data)
+  };
+
+  return fetch(API_CONFIG.TREATMENT, requestOptions)
+    .then(handleResponse, handleError);
+}
 
 function handleResponse(response: any) {
   return new Promise((resolve: any, reject: any) => {

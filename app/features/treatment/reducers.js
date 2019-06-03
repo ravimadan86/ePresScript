@@ -40,6 +40,24 @@ export default function treatmentState(state: any = initialState, action){
         processed: false,
         error: true
       };
+    case constants.UPDATE_TREATMENT_MEDICINE_SUCCESS:
+      return{
+        ...state,
+        updatedTreatment : action.payload
+      };
+
+    case constants.UPDATE_TREATMENT_MEDICINE_FAILURE:
+      return{
+        ...state,
+        treatmentUpdateError : true,
+        errorResponse : action.payload
+      };
+    case constants.UPDATE_TREATMENT_MEDICINE_REQUEST:
+      return{
+        ...state,
+        updatedTreatment : action.payload
+      };
+
     default:
       return state;
   }

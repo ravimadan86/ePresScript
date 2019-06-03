@@ -142,7 +142,7 @@ const styles = theme => ({
     padding:'0px',
   },
   searchKeyword:{
-    
+
     cursor:'pointer',
     borderBottom:'1px solid #D1D2D7',
     '&:hover': {
@@ -172,7 +172,7 @@ class TreatmentTableView extends React.Component {
       treatmentDetails: '',
       MedicineList: this.props.medicineState.medicineList,
       openAddTreatment:false,
-      
+
       treatmentName:'',
       treatmentDescription:'',
       //TempMedValue:'',
@@ -185,7 +185,7 @@ class TreatmentTableView extends React.Component {
       TempMedValue:'',
       NewMedType:'',
       NewMedStrength:'',
-      
+
 
       TempStrenValue:'',
       StrenList:[],
@@ -211,7 +211,7 @@ class TreatmentTableView extends React.Component {
   };
   handleClickOpenAddTreatment=()=>{
     this.setState({openAddTreatment:true});
-  };  
+  };
   handleCloseAddTreatment = () => {
     this.setState({ openAddTreatment: false });
   };
@@ -432,7 +432,7 @@ class TreatmentTableView extends React.Component {
     let keyword = event.target.value;
     this.setState({ treatmentName: event.target.value });
   }
-  
+
   handleTreatmentDescription =(event)=>{
     let keyword = event.target.value;
     this.setState({ treatmentDescription: event.target.value });
@@ -452,7 +452,7 @@ class TreatmentTableView extends React.Component {
       MOnChange:true
     })
   };
-  
+
   StrenSearchKeywords = (event)=>{
     let keyword = event.target.value;
     this.setState({TempStrenValue:keyword});
@@ -471,18 +471,21 @@ class TreatmentTableView extends React.Component {
   };
   handleSaveTreatment=()=>{
     console.log("Save Medicine");
-    
+    let Treatmentdescription = this.state.treatmentDescription;
+    let NameTreatment = this.state.treatmentName;
+    let medicineList =[];
+
     let size = this.state.MedList.length;
-    
+
     for(let i=0;i<size;i++){
-      
+
       let MedName = this.state.MedList[i].name;
       let TypeName = this.state.TypeList[i].name;
       let strengthName = this.state.StrenList[i].name;
       let FrequencyName = this.state.FreqList[i].name;
-      let RemarkName = this.state.RemList[i].name; 
+      let RemarkName = this.state.RemList[i].name;
       let Idval = `${this.state.Medicines.length + 1}`;
-      
+
       //Checking if there is any duplicate for safety, if Save button is double pressed.
       let fl = 1;
       let loopMed = this.state.Medicines.map((j)=>{
@@ -496,16 +499,27 @@ class TreatmentTableView extends React.Component {
           Medicines: [...prevState.Medicines, {id: Idval, product_name:MedName, type:TypeName, strength: strengthName, frequency: FrequencyName, remark: RemarkName}]
         }));
       }
-
-      let medicines = this.state.Medicines;
-      
-      let Treatmentdescription = this.state.treatmentDescription;
-      let NameTreatment = this.state.treatmentName;
-      
-      
+      let medicines = {
+        "product_name": MedName,
+        "types": TypeName,
+        "generic": "",
+        "strength": strengthName,
+        "indication": "",
+        "frequency": FrequencyName,
+        "remark": RemarkName
+      };
+      medicineList.push(medicines);
     }
-    
-  }
+    const treatmentBody = {
+      name: NameTreatment,
+      description: Treatmentdescription,
+      treatment_medicine_list: medicineList
+    };
+
+    this.props.saveTreatment(treatmentBody)
+
+  };
+
   removeAllMedicine = i =>{
     let x =  i;
     console.log(x);
@@ -549,7 +563,7 @@ class TreatmentTableView extends React.Component {
     const { classes , saveMedicine, updateTreatmentMedicine} = this.props;
     const { rows, rowsPerPage, page , medicine , treatmentDetails, MedicineList} = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-    
+
     const Med = this.state.MOnChange?this.state.MedFiltered.map((item)=>{
       return(
         <li key={item.id} onClick={()=>this.addMed(item)} className={classes.searchKeyword}>
@@ -557,7 +571,7 @@ class TreatmentTableView extends React.Component {
         </li>
       )
     }):null;
-    
+
     let medTable = null;
 
     if (rows.length !==0 ){
@@ -652,7 +666,7 @@ class TreatmentTableView extends React.Component {
                     margin="normal"
                     style={{fontSize:'14px',width:'85%',margin:'0px', padding:'0px'}}
                   />
-                  
+
                 </Grid>
                 <Grid item xs={8}>
                   <TextField
@@ -745,7 +759,7 @@ class TreatmentTableView extends React.Component {
               <Grid container>
                 {/* <Grid item xs={1}>
                   <Fab color="secondary" size="small" disabled style={{marginTop:'10px'}}>
-                    
+
                   </Fab>
                 </Grid> */}
                 <Grid item xs={3}>
@@ -836,7 +850,7 @@ class TreatmentTableView extends React.Component {
           <IconButton className={classes.iconButton} aria-label="Search">
             <SearchIcon />
           </IconButton>
-          
+
           <div className={classes.addMedicineBtn}>
               <Tooltip title="Add" aria-label="Add">
                 <Fab color="secondary" size="small" onClick={this.handleClickOpenAddTreatment}>
@@ -880,9 +894,9 @@ class TreatmentTableView extends React.Component {
             </TableFooter>
           </Table>
         </div>
-        
-            
-          
+
+
+
       </Paper>
     );
   }
