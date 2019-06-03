@@ -541,10 +541,8 @@ class TreatmentTableView extends React.Component {
   };
 
   componentWillMount(){
-    let medicineData = this.props.medicineState.medicineList;
-    console.log(medicineData);
     this.setState({
-      MedData:medicineData,
+      MedData: this.props.medicineState.medicineList,
       rows: this.props.treatmentState.treatment,
     });
   }

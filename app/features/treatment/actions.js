@@ -15,10 +15,11 @@ export function saveTreatment(value: object) {
     const { securityState } = getState();
     const { access_token } = securityState.user;
     services.saveTreatment(value, access_token).then(
-      (treatment ) => {
-        if (treatment) {
+      (response ) => {
+        if (response) {
           const msg = `New Treatment added!`;
-          dispatch(success(treatment, msg));
+          console.log(response);
+          dispatch(success(response));
         } else {
           const errorString = `Please Check the details you have provided!`;
           dispatch(failure(errorString));
@@ -30,10 +31,8 @@ export function saveTreatment(value: object) {
       }
     );
   };
-  function success(treatment , msg) { return {
-    type:SNACKBAR_OPEN,
-    message: msg,
-    variant: 'success'
+  function success(response ) { return {
+    type: constants.SAVE_TREATMENT_SUCCESS, payload: response
   }}
   function failure(error) {
     return {

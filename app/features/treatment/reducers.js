@@ -14,10 +14,10 @@ let initialState = {
 
 export default function treatmentState(state: any = initialState, action){
   switch (action.type) {
-    case constants.SAVE_TREATMENT_REQUEST:
+    case constants.SAVE_TREATMENT_SUCCESS:
       return {
         ...state,
-        treatment: action.treatment,
+        treatment: action.payload
       };
     case constants.FETCH_TREATMENT_REQUEST:
         return{

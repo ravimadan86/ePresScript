@@ -9,7 +9,7 @@ let initialState = {
   strength:"",
   generic:"",
   indication:"",
-  medicineList:"",
+  medicineList:[],
   submitted: false,
   medicine:'',
   saveMedicineSuccess: false
