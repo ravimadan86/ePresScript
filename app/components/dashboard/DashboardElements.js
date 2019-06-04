@@ -42,7 +42,6 @@ import FormControl from '@material-ui/core/FormControl';
 import NativeSelect from '@material-ui/core/NativeSelect';
 
 import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
 
 const drawerWidth = 240;
 
@@ -231,32 +230,12 @@ class DashboardElements extends Component {
       lastname: '',
       sex: '',
       contact: '',
-      single: '',
-      popper: '',
-      suggestions: [],
     };
     console.log("inside DashboardElements , Props :");
     console.log(this.props);
     this.handleClick = this.handleClick.bind(this);
 
   }
-  handleSuggestionsFetchRequested = ({ value }) => {
-    this.setState({
-      suggestions: getSuggestions(value),
-    });
-  };
-
-  handleSuggestionsClearRequested = () => {
-    this.setState({
-      suggestions: [],
-    });
-  };
-
-  handleChange = name => (event, { newValue }) => {
-    this.setState({
-      [name]: newValue,
-    });
-  };
   componentWillMount(){
     this.setState({
       firstname:this.props.usermanagementState.profile.firstname,

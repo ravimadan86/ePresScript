@@ -191,12 +191,9 @@ class Patient extends React.Component{
 				<Card className={classes.card}>
 					<CardHeader
 						avatar={
-							<Link to={{
-								pathname:'/patient',
-								search:`${item.id}`
-							}}><Avatar aria-label="Recipe" className={classes.avatar}>
+							<Avatar aria-label="Recipe" className={classes.avatar}>
 							{`${item.firstname[0]}`+`${item.lastname[0]}`}
-							</Avatar></Link>
+							</Avatar>
 						}
 						action={
 							<IconButton className={classes.iconBtn} onClick={() => this.handleClickdeletePatient(`${item.id}`,`${item.firstname}`+" "+`${item.lastname}`)}>
@@ -204,10 +201,7 @@ class Patient extends React.Component{
 							</IconButton>
 						}
 						title={
-							<Link to={{
-								pathname:'/patient',
-								search:`${item.id}`
-							}}><Typography className={classes.cardHead}>{`${item.firstname}`+" "+`${item.lastname}`}</Typography></Link>
+							<Typography className={classes.cardHead}>{`${item.firstname}`+" "+`${item.lastname}`}</Typography>
 						}
 
 						subheader={
