@@ -204,10 +204,11 @@ class Login extends Component{
                     <br/>
                     <Grid container className={classes.grid2}>
                         <Grid item xs={8}>
-                            <input type="checkbox" name="remember"/> Remember Me
+                            <input disabled={true} type="checkbox" name="remember"/> Remember Me
                         </Grid>
                         <Grid item xs={4} style={{marginTop:'3px',}}>
-                            <Link to="/forgetPassword">Forget Password</Link>
+                          Forget Password
+                            {/*<Link to="/forgetPassword">Forget Password</Link>*/}
                         </Grid>
                     </Grid>
                     <center><Button

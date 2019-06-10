@@ -356,7 +356,7 @@ class DashboardElements extends Component {
     const { classes, theme } = this.props; //location doesnt work in this component!
 
     const { open , currentPath, anchorEl , anchorEl2} = this.state;
-    
+
 
     let dash = false;
     let pat = false;
@@ -388,24 +388,24 @@ class DashboardElements extends Component {
     }
     const primaryItems = (
       <div className={classes.drawerElements}>
-        <ListItem button onClick={() => this.handleClick('dashboard')} className={ dash?`${classes.active}`:null }>
-          <ListItemIcon>
-            <BarChart/>
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItem>
+        {/*<ListItem button onClick={() => this.handleClick('dashboard')} className={ dash?`${classes.active}`:null }>*/}
+          {/*<ListItemIcon>*/}
+            {/*<BarChart/>*/}
+          {/*</ListItemIcon>*/}
+          {/*<ListItemText primary="Dashboard" />*/}
+        {/*</ListItem>*/}
         <ListItem button onClick={() => this.handleClick('prescription')} className={ presp?`${classes.active}`:null }>
           <ListItemIcon>
             <LibraryBooks/>
           </ListItemIcon>
           <ListItemText primary="Prescription" />
         </ListItem>
-        <ListItem button onClick={() => this.handleClick('patients')} className={ pat?`${classes.active}`:null }>
-          <ListItemIcon>
-            <Person/>
-          </ListItemIcon>
-          <ListItemText primary="Patients" />
-          </ListItem>
+        {/*<ListItem button onClick={() => this.handleClick('patients')} className={ pat?`${classes.active}`:null }>*/}
+          {/*<ListItemIcon>*/}
+            {/*<Person/>*/}
+          {/*</ListItemIcon>*/}
+          {/*<ListItemText primary="Patients" />*/}
+          {/*</ListItem>*/}
         <ListItem button
                   onClick={() => this.handleClick('medicine')} className={ med?`${classes.active}`:null }>
           <ListItemIcon>
@@ -461,7 +461,7 @@ class DashboardElements extends Component {
               <MenuIcon />
             </IconButton>
             <div className={classes.search}>
-              
+
             </div>
             <div className={classes.sectionDesktop}>
               <IconButton

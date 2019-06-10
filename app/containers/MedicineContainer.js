@@ -1,6 +1,5 @@
 // @flow
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import Medicine from '../components/Medicine';
 import {setStrength,
@@ -9,7 +8,7 @@ import {setStrength,
   setIndication,
   setType,
   saveMedicine,
-  fetchMedicine } from '../features/medicine';
+  fetchMedicine, deleteMedicine, updateMedicine } from '../features/medicine';
 
 const mapStateToProps = state => ({
   medicineState: state.medicineState,
@@ -22,7 +21,9 @@ const mapDispatchToProps = {
   setIndication,
   setType,
   saveMedicine,
-  fetchMedicine
+  fetchMedicine,
+  deleteMedicine,
+  updateMedicine
 };
 
 class MedicineContainer extends Component {
@@ -45,7 +46,9 @@ class MedicineContainer extends Component {
       setIndication,
       setType,
       saveMedicine,
-      fetchMedicine
+      fetchMedicine,
+      deleteMedicine,
+      updateMedicine
     } = this.props;
     console.log("Medicine Container");
     console.log(this.props);
@@ -60,6 +63,8 @@ class MedicineContainer extends Component {
                 setGeneric={setGeneric}
                 setIndication={setIndication}
                 setType={setType}
+                deleteMedicine={deleteMedicine}
+                updateMedicine={updateMedicine}
       />
     );
   }

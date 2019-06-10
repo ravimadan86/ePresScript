@@ -6,7 +6,7 @@ import Typography from "@material-ui/core/Typography/Typography";
 import Button from '@material-ui/core/Button';
 import {history} from "../../store/configureStore";
 import CloudUploadIcon from '@material-ui/icons/Subject';
-
+const ipcRenderer = require("electron").ipcRenderer;
 const styles = theme => ({
   dashboardComponent: {
     height: 'auto',
@@ -43,7 +43,9 @@ class Dashboard extends Component{
     console.log(this.props);
     this.handleClick = this.handleClick.bind(this);
   }
-
+componentDidMount(){
+  this.props.defaultDocument(ipcRenderer.sendSync("generate-pdf"));
+}
   handleClick = (requestedPath) => {
     // get the currently selected item
     const { currentPath } = this.props.location;

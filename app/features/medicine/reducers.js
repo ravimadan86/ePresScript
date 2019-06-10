@@ -12,7 +12,8 @@ let initialState = {
   medicineList:[],
   submitted: false,
   medicine:'',
-  saveMedicineSuccess: false
+  saveMedicineSuccess: false,
+  updateMedicineSuccess: false
 };
 
 export default function medicineState(state: any = initialState, action){
@@ -50,22 +51,62 @@ export default function medicineState(state: any = initialState, action){
     case constants.SAVE_MEDICINE_REQUEST:
       return {
         ...state,
+        product_name:"",
+        type:"",
+        strength:"",
+        generic:"",
+        indication:"",
+        submitted: false,
+        medicine:'',
         saveMedicineSuccess: false
       };
     case constants.SAVE_MEDICINE_SUCCESS:
       return {
         ...state,
-        medicine: action.medicine,
+        medicineList: action.medicine,
         saveMedicineSuccess: true
       };
     case constants.RESET_MEDICINE_STATE:
-      return initialState;
+      return {
+        ...state,
+        product_name:"",
+        type:"",
+        strength:"",
+        generic:"",
+        indication:"",
+        submitted: false,
+        saveMedicineSuccess: false,
+        deleteMedicineSuccess: false,
+        updateMedicineSuccess: false
+      };
     case constants.FETCH_MEDICINE_SUCCESS:
         return{
           ...state,
           medicineList: action.medicineList
         };
+    case constants.UPDATE_MEDICINE_REQUEST:
+      return{
+        ...state,
+        updateMedicineSuccess: false
+      };
+    case constants.UPDATE_MEDICINE_SUCCESS:
+      return{
+        ...state,
+        medicineList: action.payload,
+        updateMedicineSuccess: true
+      };
 
+    case constants.DELETE_MEDICINE_REQUEST:
+      return{
+        ...state,
+        deleteMedicineSuccess: false
+      };
+    case constants.DELETE_MEDICINE_SUCCESS:
+      return{
+        ...state,
+        medicineList: action.payload,
+        deleteMedicineSuccess: true
+      };
     default:
       return state;
   }

@@ -14,6 +14,9 @@ import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
 const {ipcMain} = require('electron');
 const fs = require('fs');
+const path = require('path');
+
+let CWD = process.cwd();
 let workerWindow=null;
 // if (process.env.NODE_ENV === 'production') {
 //
@@ -94,13 +97,22 @@ app.on('ready', async () => {
     center:true,
 
   });
-  workerWindow = new BrowserWindow({show: false, allowEval: true});
-  workerWindow.loadURL("file://" + __dirname + "/prescription.html");
-  // workerWindow.hide();
-  workerWindow.webContents.closeDevTools();
-  workerWindow.on("closed", () => {
-    workerWindow = undefined;
+  workerWindow = new BrowserWindow({
+    show: false,
+    height:728,
+    width:1024,
+    minHeight:728,
+    minWidth:1024
   });
+  let dbDirectory = path.join(__dirname, process.env.NODE_ENV ==='development' ? '/prescription.html' : '/prescription.html');
+  if (process.env.NODE_ENV ==='production'){
+    dbDirectory = path.join(process.resourcesPath , '/prescription.html');
+  }
+
+  workerWindow.loadFile(dbDirectory);
+//  workerWindow.hide();
+  workerWindow.webContents.closeDevTools();
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   // @TODO: Use 'ready-to-show' event
@@ -119,10 +131,24 @@ app.on('ready', async () => {
 
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  workerWindow.webContents.on('did-finish-load', () => {
+
+    if (!workerWindow) {
+      throw new Error('"workerWindow" is not defined');
+    }
+    if (process.env.START_MINIMIZED) {
+      workerWindow.minimize();
+    } else {
+      workerWindow.hide();
+     // workerWindow.focus();
+    }
+
   });
 
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+    workerWindow = null;
+  });
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
@@ -134,19 +160,16 @@ ipcMain.on('resize-me-please', (event, arg) => {
     mainWindow.unmaximize();
     mainWindow.setResizable(false);
   }else{
-    mainWindow.setResizable(true);
     mainWindow.maximize();
+    mainWindow.setResizable(false);
   }
 });
 
 ipcMain.on("printPDF", (event: any, content: any) => {
-  console.log("printPDF");
   workerWindow.webContents.send("printPDF", content);
 });
-// when worker window is ready
+
 ipcMain.on("readyToPrintPDF", (event, options) => {
-  console.log("readyToPrintPDF");
-  console.log(options);
   workerWindow.webContents.print(options);
 });
 
@@ -155,19 +178,29 @@ ipcMain.on('fetch-system-printers', (event, arg) => {
 });
 
 ipcMain.on('generate-pdf', (event, arg) => {
-  console.log("generate pdf request");
-  workerWindow.webContents.printToPDF({}, (error, data) => {
-    if (error) throw error;
-    event.returnValue = data;
-    // fs.writeFile('./app/print.pdf', data, (error) => {
-    //   if (error) throw error;
-    //
-    // })
-    console.log('Write PDF successfully.');
-  });
+  try {
+    appLog('info', `PDF generate request`);
+    workerWindow.webContents.printToPDF({}, (error, data) => {
+      if (error) appLog('error', `error while generating or saving pdf: ${error}`);
+      event.returnValue = data;//send the pdf as raw data
+      //do not write the pdf to file system
+      // fs.writeFile('/print.pdf', data, (error) => {
+      //   if (error) throw error;
+      // });
+    });
+  }catch (e) {
+    appLog('error', `error while generating or saving pdf: ${e.stack}`);
+  }
+
 });
 
 ipcMain.on("updateTemplateRequest", (event: any, content: any) => {
-  console.log("updateTemplate", content);
   workerWindow.webContents.send("updateTemplate", content);
 });
+
+
+//Function which writes two levels of LOGS
+function appLog(level, message) {
+  const origMsg = `${level} : ${message} EOL`;
+  fs.appendFileSync(path.join(CWD, 'app-info.log'), origMsg)
+}

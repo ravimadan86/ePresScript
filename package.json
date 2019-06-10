@@ -59,6 +59,13 @@
         "filter": [
           "**/*"
         ]
+      },
+      {
+        "from": "./app/prescription.html",
+        "to": "prescription.html",
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "productName": "e-Prescription",

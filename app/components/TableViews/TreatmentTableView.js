@@ -215,7 +215,7 @@ class TreatmentTableView extends React.Component {
   handleCloseAddTreatment = () => {
     this.setState({ openAddTreatment: false });
   };
-  handleClose = () => {
+  handleCloseTreatmentDialogue = () => {
     this.setState({ openMedicineDetail: false });
   };
   handleChangePage = (event, page) => {
@@ -246,7 +246,7 @@ class TreatmentTableView extends React.Component {
   {
     console.log(treatment);
 
-    const {treatment_medicine_list , name } = treatment;
+    const {treatment_medicine_list , name , treatment_id} = treatment;
     this.setState({
       openMedicineDetail: true,
       medicine: treatment_medicine_list,
@@ -470,54 +470,64 @@ class TreatmentTableView extends React.Component {
     this.setState({TempRemValue:keyword});
   };
   handleSaveTreatment=()=>{
-    console.log("Save Medicine");
+    console.log("Save Treatment request");
     let Treatmentdescription = this.state.treatmentDescription;
     let NameTreatment = this.state.treatmentName;
     let medicineList =[];
 
     let size = this.state.MedList.length;
 
-    for(let i=0;i<size;i++){
+    if (size === 0) {
+      let msg = "Add atleast one medicine and click on the + Button";
+      this.handleSnackbar(msg);
+    }else{
+      for(let i=0;i<size;i++){
 
-      let MedName = this.state.MedList[i].name;
-      let TypeName = this.state.TypeList[i].name;
-      let strengthName = this.state.StrenList[i].name;
-      let FrequencyName = this.state.FreqList[i].name;
-      let RemarkName = this.state.RemList[i].name;
-      let Idval = `${this.state.Medicines.length + 1}`;
+        let MedName = this.state.MedList[i].name;
+        let TypeName = this.state.TypeList[i].name;
+        let strengthName = this.state.StrenList[i].name;
+        let FrequencyName = this.state.FreqList[i].name;
+        let RemarkName = this.state.RemList[i].name;
+        let Idval = `${this.state.Medicines.length + 1}`;
 
-      //Checking if there is any duplicate for safety, if Save button is double pressed.
-      let fl = 1;
-      let loopMed = this.state.Medicines.map((j)=>{
-        if(j.product_name.toUpperCase() === MedName.toUpperCase() && j.strength.toUpperCase() === strengthName.toUpperCase()){
-          fl = 0;
+        //Checking if there is any duplicate for safety, if Save button is double pressed.
+        let fl = 1;
+        let loopMed = this.state.Medicines.map((j)=>{
+          if(j.product_name.toUpperCase() === MedName.toUpperCase() && j.strength.toUpperCase() === strengthName.toUpperCase()){
+            fl = 0;
+          }
+        });
+
+        if(fl==1){
+          this.setState((prevState) => ({
+            Medicines: [...prevState.Medicines, {id: Idval, product_name:MedName, type:TypeName, strength: strengthName, frequency: FrequencyName, remark: RemarkName}]
+          }));
         }
-      });
-
-      if(fl==1){
-        this.setState((prevState) => ({
-          Medicines: [...prevState.Medicines, {id: Idval, product_name:MedName, type:TypeName, strength: strengthName, frequency: FrequencyName, remark: RemarkName}]
-        }));
+        let medicines = {
+          "product_name": MedName,
+          "types": TypeName,
+          "generic": "",
+          "strength": strengthName,
+          "indication": "",
+          "frequency": FrequencyName,
+          "remark": RemarkName
+        };
+        medicineList.push(medicines);
       }
-      let medicines = {
-        "product_name": MedName,
-        "types": TypeName,
-        "generic": "",
-        "strength": strengthName,
-        "indication": "",
-        "frequency": FrequencyName,
-        "remark": RemarkName
+      const treatmentBody = {
+        name: NameTreatment,
+        description: Treatmentdescription,
+        treatment_medicine_list: medicineList
       };
-      medicineList.push(medicines);
+
+      this.props.saveTreatment(treatmentBody);
+
+      this.setState({
+        MedList: [],
+        treatmentDescription: '',
+        treatmentName:''
+      });
     }
-    const treatmentBody = {
-      name: NameTreatment,
-      description: Treatmentdescription,
-      treatment_medicine_list: medicineList
-    };
-
-    this.props.saveTreatment(treatmentBody)
-
   };
 
   removeAllMedicine = i =>{
@@ -558,7 +568,7 @@ class TreatmentTableView extends React.Component {
     console.log("Inside Treatment Table View");
     console.log(this.props);
     console.log(this.state);
-    const { classes , saveMedicine, updateTreatmentMedicine} = this.props;
+    const { classes , saveMedicine, updateTreatmentMedicine, deleteTreatment, deleteMedicineFromTreatment, updateMedicineFromTreatment} = this.props;
     const { rows, rowsPerPage, page , medicine , treatmentDetails, MedicineList} = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
@@ -598,8 +608,8 @@ class TreatmentTableView extends React.Component {
         <div>
         <Snackbar
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+            vertical: 'top',
+            horizontal: 'right',
           }}
           open={this.state.openSnackbar}
           autoHideDuration={3000}
@@ -624,7 +634,7 @@ class TreatmentTableView extends React.Component {
             fullWidth = {true}
             maxWidth = "xl"
             open={this.state.openMedicineDetail}
-            onClose={this.handleClose}
+            onClose={this.handleCloseTreatmentDialogue}
             aria-labelledby="draggable-dialog-title"
           >
             <DialogContent>
@@ -633,13 +643,19 @@ class TreatmentTableView extends React.Component {
                 medList={MedicineList}
                 treatmentDetails={treatmentDetails}
                 saveMedicine={saveMedicine}
+                deleteTreatment={deleteTreatment}
+                updateTreatmentMedicine={updateTreatmentMedicine}
+                deleteMedicineFromTreatment={deleteMedicineFromTreatment}
+                onDeleteTreatment={this.handleCloseTreatmentDialogue}
+                updateMedicineFromTreatment={updateMedicineFromTreatment}
+
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={this.handleClose} color="primary">
+              <Button onClick={this.handleCloseTreatmentDialogue} color="primary">
                 Cancel
               </Button>
-              <Button onClick={this.handleClose} color="primary">
+              <Button onClick={this.handleCloseTreatmentDialogue} color="primary">
                 OK
               </Button>
             </DialogActions>
@@ -892,9 +908,6 @@ class TreatmentTableView extends React.Component {
             </TableFooter>
           </Table>
         </div>
-
-
-
       </Paper>
     );
   }

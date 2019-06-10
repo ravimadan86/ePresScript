@@ -6,7 +6,9 @@ const log = require('electron-log');
 export const services = {
   saveMedicineDB: saveMedicineDB,
   fetchMedicine: fetchMedicine,
-  saveMedicine: saveMedicine
+  saveMedicine: saveMedicine,
+  updateMedicine: updateMedicine,
+  deleteMedicine: deleteMedicine
 };
 
 async function saveMedicineDB(value) {
@@ -24,10 +26,32 @@ function saveMedicine(access_token, medicine) {
     body: JSON.stringify(medicine)
   };
 
-  return fetch(API_CONFIG.MEDICINE, requestOptions).then(handleResponse, handleError);;
+  return fetch(API_CONFIG.MEDICINE, requestOptions).then(handleResponse, handleError);
 }
 
+function updateMedicine(access_token, medicine, id) {
+  const requestOptions = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' ,
+      'Authorization' : 'Bearer ' + access_token},
+    body: JSON.stringify(medicine)
+  };
 
+  let URL = `${API_CONFIG.MEDICINE}/${id}`;
+
+  return fetch(URL, requestOptions).then(handleResponse, handleError);
+}
+function deleteMedicine(access_token, id) {
+  const requestOptions = {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' ,
+      'Authorization' : 'Bearer ' + access_token}
+  };
+
+  let URL = `${API_CONFIG.MEDICINE}/${id}`;
+
+  return fetch(URL, requestOptions).then(handleResponse, handleError);
+}
 function fetchMedicine(access_token) {
   const requestOptions = {
     method: 'GET',

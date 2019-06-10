@@ -72,6 +72,80 @@ export function saveMedicine(medicine: object) {
   }
 }
 
+
+export function updateMedicine(medicine, id) {
+  console.log("Update medicine request");
+  return (dispatch: any , getState: Store) => {
+    const { securityState } = getState();
+    const { access_token } = securityState.user;
+    dispatch(request());
+
+    //add try catch
+    services.updateMedicine(access_token, medicine, id).then(
+      (response ) => {
+
+
+        dispatch(success(response));
+        dispatch({type: constants.RESET_MEDICINE_STATE});
+      },
+      (error: any) => {
+        console.log(error);
+        const errorString = `Cannot update Medicine`;
+        dispatch(failure(errorString));
+      }
+    );
+
+  };
+  function request() { return { type: constants.UPDATE_MEDICINE_REQUEST} }
+  function success(medicine) {
+    return {
+      type: constants.UPDATE_MEDICINE_SUCCESS,
+      payload: medicine
+    }}
+  function failure(error) {
+    return {
+      type:SNACKBAR_OPEN,
+      message: error,
+      variant: 'error'
+    }
+  }
+}
+export function deleteMedicine(id) {
+  console.log("Delete medicine request");
+  return (dispatch: any , getState: Store) => {
+    const { securityState } = getState();
+    const { access_token } = securityState.user;
+    dispatch(request());
+
+    //add try catch
+    services.deleteMedicine(access_token, id).then(
+      (response ) => {
+        dispatch(success(response));
+        dispatch({type: constants.RESET_MEDICINE_STATE});
+      },
+      (error: any) => {
+        console.log(error);
+        const errorString = `Cannot Delete Medicine`;
+        dispatch(failure(errorString));
+      }
+    );
+
+  };
+  function request() { return { type: constants.DELETE_MEDICINE_REQUEST} }
+  function success(medicine) {
+    return {
+      type: constants.DELETE_MEDICINE_SUCCESS,
+      payload: medicine
+    }}
+  function failure(error) {
+    return {
+      type:SNACKBAR_OPEN,
+      message: error,
+      variant: 'error'
+    }
+  }
+}
+
 export function fetchMedicine() {
   return (dispatch , getState: Store) => {
     const { securityState } = getState();

@@ -120,14 +120,13 @@ const styles = theme => ({
   medicineListSearch: {
     padding: 10,
   },
-  
+
 });
 
 class MedicineTableView extends React.Component {
   constructor(props) {
     super(props);
-    console.log('In MedicineView');
-    console.log(props);
+    console.log('In Medicine Table View');
     this.state = {
       rows: [],
       page: 0,
@@ -141,6 +140,20 @@ class MedicineTableView extends React.Component {
     };
   }
 
+  componentWillMount(){
+    this.setState({
+      rows : this.props.medicineState.medicineList
+    });
+  }
+
+  componentDidUpdate(prevProps) {
+    console.log("Updating Table view Component");
+    if (this.props.medicineState.medicineList !== prevProps.medicineState.medicineList) {
+      this.setState({
+        rows : this.props.medicineState.medicineList
+      })
+    }
+  }
 
   handleChangePage = (event, page) => {
     this.setState({ page });
@@ -149,6 +162,7 @@ class MedicineTableView extends React.Component {
   handleChangeRowsPerPage = event => {
     this.setState({ page: 0, rowsPerPage: event.target.value });
   };
+
   SearchMedicine = event =>{
     let keyword = event.target.value;
     this.setState({
@@ -164,17 +178,15 @@ class MedicineTableView extends React.Component {
       })
     }
   }
-  componentWillMount(){
-    this.setState({
-      rows : this.props.medicineState.medicineList
-    });
-  }
+
+
+
   handleShowUpdateDialog=(obj)=>{
     this.setState({
       UpdateDialog:true,
       medDetails:obj
     })
-  }
+  };
   handleClose = () => {
     this.setState({ UpdateDialog: false });
   };
@@ -182,15 +194,19 @@ class MedicineTableView extends React.Component {
     this.setState({
       deleteDialog:true,
       deletableMed:med
-    })
-  }
+    });
+
+  };
   handleCloseDelete=()=>{
+    console.log("Delete medicine : ", this.state.deletableMed.medicine_id);
+    this.props.deleteMedicine(this.state.deletableMed.medicine_id);
     this.setState({
       deleteDialog:false,
-    }) 
-  }
+    });
+  };
+
   render() {
-    const { classes } = this.props;
+    const { classes , updateMedicine} = this.props;
     const { rows, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
     let medTable;
@@ -205,7 +221,7 @@ class MedicineTableView extends React.Component {
             <TableCell component="th" scope="row"onClick={()=>this.handleShowUpdateDialog(medicine)}>{medicine.indication}</TableCell>
             <TableCell component="th" scope="row">
             <Tooltip title="Delete">
-              <IconButton onClick={()=>this.handleDelete(n)}>
+              <IconButton onClick={()=>this.handleDelete(medicine)}>
                   <DeleteIcon/>
                 </IconButton>
             </Tooltip>
@@ -284,7 +300,11 @@ class MedicineTableView extends React.Component {
             open={this.state.UpdateDialog}
             onClose={this.handleClose}
           >
-          <UpdateMedicine name={"Normal Medicine"} obj={this.state.medDetails}/>
+          <UpdateMedicine
+            name={"Normal Medicine"}
+            obj={this.state.medDetails}
+            updateMedicine={updateMedicine}
+          />
           <DialogActions>
               <Button onClick={this.handleClose} color="primary">
                 Ok
@@ -298,18 +318,14 @@ class MedicineTableView extends React.Component {
           >
           <DialogTitle>Are you Sure you want to delete?</DialogTitle>
             <DialogContent>
-              
+
                   <Typography>{this.state.deletableMed.product_name}</Typography>
-              
+
             </DialogContent>
           <DialogActions>
               <Button onClick={this.handleCloseDelete} color="secondary" variant="contained">
                 Delete
               </Button>
-              <Button onClick={this.handleCloseDelete} color="primary">
-                Cancel
-              </Button>
-              
             </DialogActions>
         </Dialog>
       </Paper>

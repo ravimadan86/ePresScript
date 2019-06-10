@@ -391,9 +391,11 @@ class Settings extends React.Component{
     console.log("Inside Settings Component");
     console.log("State :" , this.state);
 
+    const {document} = this.props.settingsState;
+
     const {expanded, value, docUpdated, defaultTemplate, dr_name, dr_education, dr_specialist, education_institute, reg_no,
       center_text, chamber_name, chamber_address, chamber_timing, margin_top,
-      margin_bottom, margin_left, margin_right, document} = this.state;
+      margin_bottom, margin_left, margin_right} = this.state;
 
 
       return(
@@ -463,7 +465,7 @@ class Settings extends React.Component{
               />
             </span>
             <div className= {classes.LayoutOptionsContent}>
-              <div className= {classes.LayoutOptionsContentLeft}>
+              <div>
                 <TextField disabled={true} onChange={this.handleSettingChange} id="dr_name" label="Dr Name" value={dr_name} className={classes.layoutOptionsTextfield}/>
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="dr_education" label="Education" value={dr_education} placeholder="Placeholder" className={classes.layoutOptionsTextfield} />
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="dr_specialist" label="Specialist" value={dr_specialist} placeholder="Placeholder" className={classes.layoutOptionsTextfield}/>
@@ -471,11 +473,11 @@ class Settings extends React.Component{
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="reg_no" label="Register No" value={reg_no} placeholder="Placeholder" className={classes.layoutOptionsTextfield} />
               </div>
 
-              <div className= {classes.LayoutOptionsContentCenter}>
+              <div>
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="center_text" label="Center Text" value={center_text} className={classes.layoutOptionsTextfield}/>
               </div>
 
-              <div className= {classes.LayoutOptionsContentRight}>
+              <div>
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="chamber_name" label="Chamber Name" value={chamber_name} className={classes.layoutOptionsTextfield}/>
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="chamber_address" label="Chamber Address" value={chamber_address} className={classes.layoutOptionsTextfield}/>
                 <TextField disabled={!defaultTemplate} onChange={this.handleSettingChange} id="chamber_timing" label="Timing" value={chamber_timing} className={classes.layoutOptionsTextfield}/>
@@ -493,7 +495,7 @@ class Settings extends React.Component{
                 label="Display Lines"
               />
             </div>
-            <div className= {classes.LayoutOptionsMargin}>
+            <div>
               <TextField onChange={this.handleSettingChange} id="margin_top" type="number" label="Top" value= {margin_top} className={classes.layoutOptionsTextfield}/>
               <TextField onChange={this.handleSettingChange} id="margin_bottom" type="number" label="Bottom" value= {margin_bottom} className={classes.layoutOptionsTextfield}/>
               <TextField onChange={this.handleSettingChange} id="margin_left" type="number" label="Left" value= {margin_left} className={classes.layoutOptionsTextfield}/>

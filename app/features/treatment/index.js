@@ -1,2 +1,3 @@
-export { fetchTreatment , saveTreatment , updateTreatmentMedicine} from './actions';
+export { fetchTreatment , saveTreatment , updateTreatmentMedicine,
+  deleteMedicineFromTreatment, deleteTreatment, updateMedicineFromTreatment} from './actions';
 

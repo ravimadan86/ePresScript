@@ -9,7 +9,8 @@ let initialState = {
   treatment: [],
   isProcessing: false,
   processed: false,
-  error: false
+  error: false,
+  treatmentViewDialogue: false
 };
 
 export default function treatmentState(state: any = initialState, action){
@@ -43,7 +44,17 @@ export default function treatmentState(state: any = initialState, action){
     case constants.UPDATE_TREATMENT_MEDICINE_SUCCESS:
       return{
         ...state,
-        updatedTreatment : action.payload
+        treatment : action.payload
+      };
+
+    case constants.UPDATE_MEDICINE_FROM_TREATMENT_REQUEST:
+      return{
+        ...state
+      };
+    case constants.UPDATE_MEDICINE_FROM_TREATMENT_SUCCESS:
+      return{
+        ...state,
+        treatment : action.payload
       };
 
     case constants.UPDATE_TREATMENT_MEDICINE_FAILURE:
@@ -52,12 +63,26 @@ export default function treatmentState(state: any = initialState, action){
         treatmentUpdateError : true,
         errorResponse : action.payload
       };
-    case constants.UPDATE_TREATMENT_MEDICINE_REQUEST:
+    case constants.DELETE_TREATMENT_REQUEST:
+      return{
+        ...state
+      };
+    case constants.DELETE_TREATMENT_SUCCESS:
       return{
         ...state,
-        updatedTreatment : action.payload
+        treatment : action.payload,
+        treatmentViewDialogue: false
       };
 
+    case constants.DELETE_MEDICINE_FROM_TREATMENT_REQUEST:
+      return{
+        ...state
+      };
+    case constants.DELETE_MEDICINE_FROM_TREATMENT_SUCCESS:
+      return{
+        ...state,
+        treatment : action.payload
+      };
     default:
       return state;
   }

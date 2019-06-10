@@ -4,13 +4,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import navigateTo from "../features/navigation";
 import Dashboard from '../components/dashboard/Dashboard'
+import {defaultDocument} from "../features/settings";
 
 const mapStateToProps = state => ({
   securityState: state.securityState,
   usermanagementState: state.usermanagementState
 });
 const mapDispatchToProps = {
-  navigateTo
+  navigateTo, defaultDocument
 };
 class DashboardContentContainer extends Component {
   constructor(props) {
@@ -23,7 +24,7 @@ class DashboardContentContainer extends Component {
 
   render() {
     const {
-      navigateTo, location , securityState , fetchProfile
+      navigateTo, location , securityState , fetchProfile, defaultDocument
     } = this.props;
     console.log("DashboardContentContainer");
     console.log(this.props);
@@ -32,6 +33,7 @@ class DashboardContentContainer extends Component {
                  location={location}
                  securityState={securityState}
                  fetchProfile={fetchProfile}
+                 defaultDocument={defaultDocument}
       />
     );
   }

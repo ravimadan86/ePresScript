@@ -5,7 +5,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import TextField from '@material-ui/core/TextField';
 import CssBaseline from "@material-ui/core/CssBaseline/CssBaseline";
 import FormControl from "@material-ui/core/FormControl/FormControl";
-import MedicineViewTest from "./TableViews/MedicineTableView";
+import MedicineTableView from "./TableViews/MedicineTableView";
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -138,14 +138,14 @@ class Medicine extends Component {
     } = this.props.medicineState;
 
     const {
-      medicineState
+      medicineState, updateMedicine, deleteMedicine
     } = this.props;
 
     const { classes } = this.props;
     return (
       <div className={classes.medicineComponent}>
         <CssBaseline />
-        <div className={classes.addMedicineDialogueBox}>
+        <div>
 
           <Dialog
             open={this.state.open}
@@ -223,7 +223,6 @@ class Medicine extends Component {
                     fullWidth
                     variant="contained"
                     color="primary"
-                    className={classes.saveMedicineBtn}
                   >
                     Add Medicine
                   </Button>
@@ -251,7 +250,11 @@ class Medicine extends Component {
               </Fab>
             </Tooltip>
             </div>
-            <MedicineViewTest medicineState={medicineState}/>
+            <MedicineTableView
+              medicineState={medicineState}
+              updateMedicine={updateMedicine}
+              deleteMedicine={deleteMedicine}
+            />
           </div>
 
 
