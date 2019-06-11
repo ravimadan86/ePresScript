@@ -1,38 +1,74 @@
 // @flow
 import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import AddMedicine from '../components/Medicine';
-import { addMedicineActions } from '../actions/medicineFormActions';
-import type {MedicineFormStateType} from "../types/state/MedicineFormStateType";
+import Medicine from '../components/Medicine';
+import {setStrength,
+  setProductName,
+  setGeneric,
+  setIndication,
+  setType,
+  saveMedicine,
+  fetchMedicine, deleteMedicine, updateMedicine } from '../features/medicine';
 
-// type State = {
-//   medicineForm: MedicineFormStateType
-// };
-
-// Map the stuff we want from the global application state in redux to the props
-function mapStateToProps(state: State) {
-  return {
-    medicineForm: state.medicineForm,
-    authentication: state.authentication
+const mapStateToProps = state => ({
+  medicineState: state.medicineState,
+  securityState: state.securityState,
+});
+const mapDispatchToProps = {
+  setStrength,
+  setProductName,
+  setGeneric,
+  setIndication,
+  setType,
+  saveMedicine,
+  fetchMedicine,
+  deleteMedicine,
+  updateMedicine
 };
+
+class MedicineContainer extends Component {
+  constructor(props) {
+    super(props);
+
+    // if the accessToken is valid, redirect to homepage
+    //const { accessTokenIsValid, navigateToAlias } = this.props;
+  }
+
+  render() {
+    const {
+      login,
+      loggingIn,
+      medicineState,
+      securityState,
+      setStrength,
+      setProductName,
+      setGeneric,
+      setIndication,
+      setType,
+      saveMedicine,
+      fetchMedicine,
+      deleteMedicine,
+      updateMedicine
+    } = this.props;
+    console.log("Medicine Container");
+    console.log(this.props);
+    return (
+      <Medicine
+                saveMedicine={saveMedicine}
+                setStrength={setStrength}
+                medicineState={medicineState}
+                fetchMedicine={fetchMedicine}
+                securityState={securityState}
+                setProductName={setProductName}
+                setGeneric={setGeneric}
+                setIndication={setIndication}
+                setType={setType}
+                deleteMedicine={deleteMedicine}
+                updateMedicine={updateMedicine}
+      />
+    );
+  }
 }
 
-// Map any actions required to the props
-function mapDispatchToProps(dispatch: any) {
-  return bindActionCreators(
-    {
-      setForm: addMedicineActions.setForm,
-      setName: addMedicineActions.setName,
-      setStrength: addMedicineActions.setStrength,
-      setFrequency: addMedicineActions.setFrequency,
-      setRemark: addMedicineActions.setRemark,
-      setSubmitted: addMedicineActions.setSubmitted,
-      saveMedicine: addMedicineActions.saveMedicine
-    },
-    dispatch
-  );
-}
-type Props = {};
 
-export default connect(mapStateToProps,mapDispatchToProps)(AddMedicine);
+export default connect(mapStateToProps,mapDispatchToProps)(MedicineContainer);

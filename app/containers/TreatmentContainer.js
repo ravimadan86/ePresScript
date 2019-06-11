@@ -1,36 +1,56 @@
 // @flow
 
-import React, { PureComponent } from 'react';
+import React, {Component} from 'react';
 import { connect } from 'react-redux';
-import type {MedicineFormStateType} from "../types/state/MedicineFormStateType";
-import {bindActionCreators} from "redux";
-import {addMedicineActions} from "../actions/medicineFormActions";
 import Treatment from '../components/Treatment';
+import {fetchTreatment , saveTreatment, updateTreatmentMedicine, deleteTreatment, deleteMedicineFromTreatment, updateMedicineFromTreatment} from "../features/treatment";
+import {saveMedicine} from "../features/medicine";
 
-type State = {
-  medicineForm: MedicineFormStateType
+
+const mapStateToProps = state => ({
+  medicineState: state.medicineState,
+  securityState: state.securityState,
+  treatmentState: state.treatmentState
+});
+
+const mapDispatchToProps = {
+  fetchTreatment , saveTreatment , saveMedicine , updateTreatmentMedicine, deleteTreatment,
+  deleteMedicineFromTreatment, updateMedicineFromTreatment
 };
 
-// Map the stuff we want from the global application state in redux to the props
-function mapStateToProps(state: State) {
-  return {
-    medicineForm: state.medicineForm
-  };
+class TreatmentContainer extends Component {
+  constructor(props) {
+    super(props);
+
+    // if the accessToken is valid, redirect to homepage
+    //const { accessTokenIsValid, navigateToAlias } = this.props;
+  }
+
+  render() {
+    const {
+     medicineState, securityState , treatmentState, saveTreatment,
+      fetchTreatment , saveMedicine , updateTreatmentMedicine, deleteMedicineFromTreatment,
+      deleteTreatment, updateMedicineFromTreatment
+    } = this.props;
+    console.log("Treatment Container");
+    console.log(this.props);
+    return (
+      <Treatment
+        medicineState={medicineState}
+        securityState={securityState}
+        treatmentState={treatmentState}
+
+        saveTreatment={saveTreatment}
+        fetchTreatment={fetchTreatment}
+        saveMedicine={saveMedicine}
+        updateTreatmentMedicine={updateTreatmentMedicine}
+        deleteMedicineFromTreatment={deleteMedicineFromTreatment}
+        deleteTreatment={deleteTreatment}
+        updateMedicineFromTreatment={updateMedicineFromTreatment}
+      />
+    );
+  }
 }
 
-// Map any actions required to the props
-function mapDispatchToProps(dispatch: any) {
-  return bindActionCreators(
-    {
-      setForm: addMedicineActions.setForm,
-      setName: addMedicineActions.setName,
-      setStrength: addMedicineActions.setStrength,
-      setFrequency: addMedicineActions.setFrequency,
-      setRemark: addMedicineActions.setRemark,
-      setSubmitted: addMedicineActions.setSubmitted
-    },
-    dispatch
-  );
-}
 
-export default connect(mapStateToProps,mapDispatchToProps)(Treatment);
+export default connect(mapStateToProps,mapDispatchToProps)(TreatmentContainer);
